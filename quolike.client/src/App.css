@@ -1,19 +1,67 @@
-﻿#root {
+﻿/*#root {
     max-width: 1280px;
     margin: 0 auto;
     padding: 2rem;
     text-align: center;
 }
+*/
 
-tr:nth-child(even) {
-    background: #F2F2F2;
+body #root {
+    height: 100%;
 }
 
-tr:nth-child(odd) {
-    background: #FFF;
+#root .header {
+    height: 5%;
 }
 
-th, td {
-    padding-left: 1rem;
-    padding-right: 1rem;
+#root .main {
+    height: 95%;
+}
+
+.main .tabs {
+    height: 5%;
+}
+
+.main .quotes {
+    height: 90%;
+    overflow-y: scroll;
+}
+
+.main .pagination {
+    height: 10%;
+}
+
+.header {
+    display: flex;
+    column-gap: 80px;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.tab-list {
+    display: flex;
+    column-gap: 50px;
+    justify-content: center;
+    list-style-type: none;
+}
+
+.tab-list button {
+    padding: 3px 50px;
+}
+
+.quote {
+    border: 1px solid red;
+}
+
+.quotes {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.pagination {
+    align-self: center;
 }
