@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using QuoLike.Server.Data;
+
 namespace QuoLike.Server
 {
     public class Program
@@ -8,6 +11,7 @@ namespace QuoLike.Server
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddDbContext<QuoLikeDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("QuoLikeDbContext")));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
