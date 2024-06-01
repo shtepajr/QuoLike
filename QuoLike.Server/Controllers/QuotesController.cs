@@ -2,41 +2,52 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuoLike.Server.Data;
+using QuoLike.Server.Data.Repositories;
+using QuoLike.Server.DTOs;
+using QuoLike.Server.Mappers;
 using QuoLike.Server.Models;
 
 namespace QuoLike.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/quotes")]
     [ApiController]
     public class QuotesController : ControllerBase
     {
         private readonly ILogger<QuotesController> _logger;
-        private readonly QuoLikeDbContext _context;
-        public QuotesController(ILogger<QuotesController> logger, QuoLikeDbContext context)
+        private readonly IQuoteRepository _quoteRepository;
+        public QuotesController(ILogger<QuotesController> logger, IQuoteRepository quoteSelectRepository)
         {
             _logger = logger;
-            _context = context;
+            _quoteRepository = quoteSelectRepository;
         }
 
         [HttpGet]
-        public IEnumerable<QuoteSelect> Get()
+        public async Task<IActionResult> GetAll()
         {
-            var quotes = _context.Quotes.ToList();
-            return quotes;
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var quotes = await _quoteRepository.GetAllAsync();
+
+            var quoteDtos = quotes.Select(s => s.ToQuoteDTO());
+
+            return Ok(quoteDtos);
         }
 
-        [HttpGet]
-        [Route("TestGetPost")]
-        public IEnumerable<QuoteSelect> TestGetPost()
+        [HttpPost]
+        public async Task<IActionResult> Update([FromBody] QuoteUpdateDTO quote)
         {
-            _context.Quotes.Add(new QuoteSelect()
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var q = await _quoteRepository.UpdateAsync(quote.ToQuote());
+
+            if (q == null)
             {
-                QuoteSelectId  = "NTseDGDXOuo8",
-                QuoteId = "QpXN5tJQwW5M",
-                Action = SelectAction.Archive
-            });
-            _context.SaveChanges();
-            return _context.Quotes.ToArray();
+                return NotFound("Quote not found");
+            }
+
+            return Ok(q.ToQuoteDTO());
         }
     }
 }

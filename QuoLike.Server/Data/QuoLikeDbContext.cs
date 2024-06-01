@@ -5,7 +5,7 @@ namespace QuoLike.Server.Data
 {
     public class QuoLikeDbContext : DbContext
     {
-        public DbSet<QuoteSelect> Quotes { get; set; }
+        public DbSet<Quote> Quotes { get; set; }
         public QuoLikeDbContext(DbContextOptions<QuoLikeDbContext> options) : base(options)
         {
         }
