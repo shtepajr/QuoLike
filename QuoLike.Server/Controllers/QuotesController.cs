@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using QuoLike.Server.Data;
 using QuoLike.Server.Data.Repositories;
 using QuoLike.Server.DTOs;
+using QuoLike.Server.Helpers;
 using QuoLike.Server.Mappers;
 using QuoLike.Server.Models;
 
@@ -22,16 +23,20 @@ namespace QuoLike.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject queryObject)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var quotes = await _quoteRepository.GetAllAsync();
+            var quotes = await _quoteRepository.GetAllAsync(queryObject);
 
             var quoteDtos = quotes.Select(s => s.ToQuoteDTO());
 
-            return Ok(quoteDtos);
+            return Ok(new
+            {
+                TotalItems = quotes.Count(),
+                Items = quoteDtos
+            });
         }
 
         [HttpGet("{id}")]

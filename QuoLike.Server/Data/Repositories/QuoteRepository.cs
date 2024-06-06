@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuoLike.Server.DTOs;
+using QuoLike.Server.Helpers;
 using QuoLike.Server.Mappers;
 using QuoLike.Server.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace QuoLike.Server.Data.Repositories
 {
@@ -15,9 +18,26 @@ namespace QuoLike.Server.Data.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Quote>> GetAllAsync()
+        public async Task<IEnumerable<Quote>> GetAllAsync(QueryObject queryObject)
         {
-            return await _context.Quotes.ToListAsync();
+            var quotes = _context.Quotes.AsQueryable();
+
+            // Tabs
+            if (queryObject.isFavorite.HasValue)
+            {
+                quotes = quotes.Where(q => q.isFavorite == queryObject.isFavorite);
+            }
+            else if (queryObject.isArchived.HasValue)
+            {
+                quotes = quotes.Where(q => q.isArchived == queryObject.isArchived);
+            }
+
+            // Pagination
+            var totalItems = await quotes.CountAsync();
+            var skipNumber = (queryObject.Page - 1) * queryObject.PageSize;
+            quotes = quotes.Skip(skipNumber).Take(queryObject.PageSize);
+
+            return await quotes.ToListAsync();
         }
 
         public async Task<Quote?> GetAsync(string id)
