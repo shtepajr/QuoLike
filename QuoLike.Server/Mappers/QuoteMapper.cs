@@ -5,25 +5,35 @@ namespace QuoLike.Server.Mappers
 {
     public static class QuoteMapper
     {
-        public static Quote ToQuote(this QuoteUpdateDTO quoteSelectUpdateDTO)
+        public static Quote ToQuote(this QuoteUpdateDTO updateDTO)
         {
             return new Quote()
             {
-                QuoteSelectId = quoteSelectUpdateDTO.QuoteSelectId,
-                QuoteId = quoteSelectUpdateDTO.QuoteId,
-                isArchived = quoteSelectUpdateDTO.isArchived,
-                isFavorite = quoteSelectUpdateDTO.isFavorite            
+                QuoteId = updateDTO.QuoteId,
+                ExternalId = updateDTO.ExternalId,
+                isArchived = updateDTO.isArchived,
+                isFavorite = updateDTO.isFavorite            
             };
         }
 
-        public static QuoteDTO ToQuoteDTO(this Quote quoteSelect)
+        public static QuoteDTO ToQuoteDTO(this Quote quoteModel)
         {
             return new QuoteDTO()
             {
-                QuoteSelectId = quoteSelect.QuoteSelectId,
-                QuoteId = quoteSelect.QuoteId,
-                isArchived = quoteSelect.isArchived,
-                isFavorite = quoteSelect.isFavorite
+                QuoteId = quoteModel.QuoteId,
+                ExternalId = quoteModel.ExternalId,
+                isArchived = quoteModel.isArchived,
+                isFavorite = quoteModel.isFavorite
+            };
+        }
+
+        public static Quote ToQuote(this QuoteCreateDTO createDTO)
+        {
+            return new Quote()
+            {
+                ExternalId = createDTO.ExternalId,
+                isArchived = createDTO.isArchived,
+                isFavorite = createDTO.isFavorite
             };
         }
     }

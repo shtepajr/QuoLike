@@ -34,13 +34,54 @@ namespace QuoLike.Server.Controllers
             return Ok(quoteDtos);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get([FromRoute] string id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var q = await _quoteRepository.GetAsync(id);
+
+            if (q is null)
+                return NotFound();
+
+            return Ok(q.ToQuoteDTO());
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Update([FromBody] QuoteUpdateDTO quote)
+        public async Task<IActionResult> Create([FromBody] QuoteCreateDTO quote)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var q = await _quoteRepository.AddAsync(quote.ToQuote());
+
+            return CreatedAtAction(nameof(Get), new { id = q.QuoteId }, q.ToQuoteDTO());
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody] QuoteUpdateDTO quote)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var q = await _quoteRepository.UpdateAsync(quote.ToQuote());
+
+            if (q == null)
+            {
+                return NotFound("Quote not found");
+            }
+
+            return Ok(q.ToQuoteDTO());
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var q = await _quoteRepository.DeleteAsync(id);
 
             if (q == null)
             {

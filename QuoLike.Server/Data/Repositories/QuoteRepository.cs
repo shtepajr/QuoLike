@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuoLike.Server.DTOs;
 using QuoLike.Server.Mappers;
 using QuoLike.Server.Models;
@@ -19,26 +20,33 @@ namespace QuoLike.Server.Data.Repositories
             return await _context.Quotes.ToListAsync();
         }
 
-        public Task<Quote> GetByIdAsync(int id)
+        public async Task<Quote?> GetAsync(string id)
         {
-            throw new NotImplementedException();
+            return await _context.Quotes.FindAsync(id);
+        }
+        public async Task<Quote> AddAsync(Quote quote)
+        {
+            var createdQuote = await _context.Quotes.AddAsync(quote);
+            await _context.SaveChangesAsync();
+            return createdQuote.Entity;
         }
 
-        public async Task<Quote> UpdateAsync(Quote quote)
+        public async Task<Quote?> UpdateAsync(Quote quote)
         {
-            var existingQuote = await _context.Quotes.FindAsync(quote.QuoteSelectId);
-
-            if (existingQuote == null)
-            {
-                return null;
-            }
-
-            existingQuote.isArchived = quote.isArchived;
-            existingQuote.isFavorite = quote.isFavorite;
-
+            _context.Entry(quote).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+            return quote;
+        }
 
-            return existingQuote;
+        public async Task<Quote?> DeleteAsync(string id)
+        {
+            var quote = await _context.Quotes.FindAsync(id);
+            if (quote == null)
+                return null;
+
+            _context.Quotes.Remove(quote);
+            await _context.SaveChangesAsync();
+            return quote;
         }
     }
 }

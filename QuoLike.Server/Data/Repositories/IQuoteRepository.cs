@@ -5,7 +5,9 @@ namespace QuoLike.Server.Data.Repositories
     public interface IQuoteRepository
     {
         Task<IEnumerable<Quote>> GetAllAsync();
-        Task<Quote> GetByIdAsync(int id);
+        Task<Quote> GetAsync(string id);
+        Task<Quote> AddAsync(Quote quote);
         Task<Quote> UpdateAsync(Quote quoteSelect);
+        Task<Quote?> DeleteAsync(string id);
     }
 }

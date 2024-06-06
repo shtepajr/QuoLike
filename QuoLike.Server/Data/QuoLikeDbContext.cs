@@ -8,6 +8,17 @@ namespace QuoLike.Server.Data
         public DbSet<Quote> Quotes { get; set; }
         public QuoLikeDbContext(DbContextOptions<QuoLikeDbContext> options) : base(options)
         {
+
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Quote>()
+                .ToTable("Quotes")
+                .HasKey(q => q.QuoteId);
+            modelBuilder.Entity<Quote>()
+                .Property(q => q.QuoteId)
+                .ValueGeneratedOnAdd();
         }
     }
 }
