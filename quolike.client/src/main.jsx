@@ -1,10 +1,35 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
+import {
+    createBrowserRouter,
+    RouterProvider,
+} from "react-router-dom";
+
+// my
 import './index.css'
 
+import Root, {
+    loader as rootLoader,
+} from './routes/root.jsx'
+
+import ErrorPage from "./error-page";
+import Index from './routes/index.jsx';
+
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <Root />,
+        errorElement: <ErrorPage />,
+        loader: rootLoader,
+        action: () => { console.log('action called'); },
+        children: [
+            { index: true, element: <Index /> },
+        ]
+    },
+]);
+
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <React.StrictMode>
+        <RouterProvider router={router} />
+    </React.StrictMode>,
 )

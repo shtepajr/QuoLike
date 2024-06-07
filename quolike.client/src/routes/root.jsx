@@ -1,54 +1,52 @@
 import { useEffect, useState } from 'react';
-import './App.css';
-import Quote from './components/Quote';
+import '../index.css';
+import Quote from './quote.jsx';
 import ReactPaginate from 'react-paginate';
 import 'bootstrap/dist/css/bootstrap.css';
 
-function App() {
-    const [quotesData, setQuotesData] = useState({}); // api data
+import {
+    Outlet,
+    NavLink,
+    useLoaderData,
+    Form,
+    redirect,
+    useNavigation,
+    useSubmit,
+    useNavigate,
+} from "react-router-dom";
+
+import {
+    fetchQuotable,
+    fetchFavorites,
+} from '../quotes.js';
+
+export async function loader({ request }) {
+    const url = new URL(request.url);
+    const page = url.searchParams.get('page') || 1;
+    const limit = url.searchParams.get('limit') || 15;
+    return await fetchQuotable(page, limit);
+}
+
+export default function Root() {
+    const quotesData = useLoaderData();
+    const navigate = useNavigate();
+
+    // pagination
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [totalPages, setTotalPages] = useState(quotesData.totalPages);
     const [limit, setLimit] = useState(15);
-    // local data (describe api data)
-    const [selectedQuotesData, setSelectedQuotesData] =
-        useState(() => JSON.parse(localStorage.getItem('selectedQuotesData')) || []);
 
     useEffect(() => {
-        fetchQuotes(page, limit); // api data
-    }, [page, limit]);
-
-    useEffect(() => {
-        localStorage.setItem('selectedQuotesData', JSON.stringify(selectedQuotesData));
-    }, [selectedQuotesData]);
-
-    async function fetchQuotes(page, limit) {
-        try {
-            const response = await fetch(`https://api.quotable.io/quotes?page=${page}&limit=${limit}`);
-            const data = await response.json();
-            setQuotesData(data);
-            setTotalPages(data.totalPages);
-        } catch (error) {
-            console.error('Error fetching quotes:', error);
-        }
-    }
+        navigate(`/?page=${page}&limit=${limit}`);
+        console.log('useEffect called by [page, limit, navigate] changes');
+    }, [page, limit, navigate]);
 
     const handlePageClick = (data) => {
-        setPage(data.selected + 1); // data.selected is zero-based, so we add 1 to get the actual page number
+        setPage(data.selected + 1);
+        console.log('handlePageClick called');
     };
 
-    function toggleFavorite(id) {
-        // Update local state
-        setSelectedQuotesData((oldSelect) => {
-            let current = oldSelect?.find(sq => sq.id === id);
-            if (current === undefined) {
-                return [...oldSelect.filter(sq => sq.id !== id), { id, isFavorite: true, isArchived: false }];
-            } else {
-                return [...oldSelect.filter(sq => sq.id !== id), { ...current, isFavorite: !current.isFavorite }];
-            }
-        });
-    }
-
-    let quotes = quotesData?.results?.map(
+    let quotes = quotesData?.results.map(
         (quote) => {
             return (
                 <Quote
@@ -58,9 +56,9 @@ function App() {
                     content={quote.content}
                     author={quote.author}
                     tags={quote.tags}
-                    isFavorite={selectedQuotesData?.find(sq => sq.id === quote._id)?.isFavorite}
-                    isArchived={selectedQuotesData?.find(sq => sq.id === quote._id)?.isArchived}
-                    toggleFavorite={toggleFavorite}
+                    //isFavorite={selectedQuotesData?.find(sq => sq.id === quote._id)?.isFavorite}
+                    //isArchived={selectedQuotesData?.find(sq => sq.id === quote._id)?.isArchived}
+                    //toggleFavorite={toggleFavorite}
                 />
             );
         }
@@ -88,10 +86,12 @@ function App() {
                             </li>
                         </ul>
                     </nav>
-                </div> 
+                </div>
                 <div className="quotes">
                     {quotes}
                 </div>
+
+                {/*<Outlet />*/}
                 <div className="pagination">
                     <ReactPaginate
                         nextLabel="next >"
@@ -118,5 +118,3 @@ function App() {
         </>
     );
 }
-
-export default App;
