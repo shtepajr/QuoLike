@@ -15,7 +15,6 @@ export async function fetchQuotable(page, limit) {
         throw error; // Re-throw the error for potential handling at a higher level
     }
 }
-
 export async function fetchFavorites() {
     try {
         const response = await fetch(`${origin}/api/quotes?isFavorite=true`);

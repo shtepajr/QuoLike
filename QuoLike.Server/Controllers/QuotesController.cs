@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuoLike.Server.Data;
@@ -34,8 +35,9 @@ namespace QuoLike.Server.Controllers
 
             return Ok(new
             {
-                TotalItems = quotes.Count(),
-                Items = quoteDtos
+                TotalCount = quotes.Count(),
+                TotalPages = (int)Math.Ceiling(quotes.Count() / (double)queryObject.PageSize),
+                Results = quoteDtos
             });
         }
 

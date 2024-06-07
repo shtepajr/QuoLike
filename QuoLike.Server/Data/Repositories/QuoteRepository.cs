@@ -32,6 +32,23 @@ namespace QuoLike.Server.Data.Repositories
                 quotes = quotes.Where(q => q.isArchived == queryObject.isArchived);
             }
 
+            return await quotes.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Quote>> GetPaginatedAsync(QueryObject queryObject)
+        {
+            var quotes = _context.Quotes.AsQueryable();
+
+            // Tabs
+            if (queryObject.isFavorite.HasValue)
+            {
+                quotes = quotes.Where(q => q.isFavorite == queryObject.isFavorite);
+            }
+            else if (queryObject.isArchived.HasValue)
+            {
+                quotes = quotes.Where(q => q.isArchived == queryObject.isArchived);
+            }
+
             // Pagination
             var totalItems = await quotes.CountAsync();
             var skipNumber = (queryObject.Page - 1) * queryObject.PageSize;

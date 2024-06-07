@@ -18,23 +18,58 @@ import {
 import {
     fetchQuotable,
     fetchFavorites,
+    fetchArchived
 } from '../quotes.js';
 
 export async function loader({ request }) {
     const url = new URL(request.url);
     const page = url.searchParams.get('page') || 1;
     const limit = url.searchParams.get('limit') || 15;
-    return await fetchQuotable(page, limit);
+
+    // Fetch quotes from Quotable API
+    const quotableData = await fetchQuotable(page, limit);
+
+    // Fetch favorites and archived from my own API
+    const favoriteQuotes = await fetchFavorites();
+    const archivedQuotes = await fetchArchived();
+
+    // Merge
+    const mergedQuotes = quotableData.results.map(quote => {
+        const isFavorite = favoriteQuotes.results.some(fav => fav.externalId === quote._id);
+        const isArchived = archivedQuotes.results.some(arch => arch.externalId === quote._id);
+        if (isFavorite) {
+            console.log('favorite found');
+        }
+        if (isArchived) {
+            console.log('archived found');
+        }
+        return { ...quote, isFavorite, isArchived };
+    });
+
+    return { results: mergedQuotes, totalPages: quotableData.totalPages };
 }
 
 export default function Root() {
+    // router
     const quotesData = useLoaderData();
     const navigate = useNavigate();
 
     // pagination
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(quotesData.totalPages);
-    const [limit, setLimit] = useState(15);
+    const [totalPages, setTotalPages] = useState(1);
+    const [limit, setLimit] = useState(6);
+
+    const tabs = ['quotes', 'favorite', 'achieved'];
+    const [tab, setTab] = useState(tabs[0]);
+
+    useEffect(() => {
+        setTotalPages(quotesData.totalPages);
+    }, [quotesData]);
+
+    useEffect(() => {
+        setPage(1);
+        // TODO: fetch my quotes
+    }, [tab]);
 
     useEffect(() => {
         navigate(`/?page=${page}&limit=${limit}`);
@@ -56,9 +91,11 @@ export default function Root() {
                     content={quote.content}
                     author={quote.author}
                     tags={quote.tags}
-                    //isFavorite={selectedQuotesData?.find(sq => sq.id === quote._id)?.isFavorite}
-                    //isArchived={selectedQuotesData?.find(sq => sq.id === quote._id)?.isArchived}
-                    //toggleFavorite={toggleFavorite}
+                    isFavorite={quote.isFavorite}
+                    isArchived={quote.isArchived}
+                //isFavorite={selectedQuotesData?.find(sq => sq.id === quote._id)?.isFavorite}
+                //isArchived={selectedQuotesData?.find(sq => sq.id === quote._id)?.isArchived}
+                //toggleFavorite={toggleFavorite}
                 />
             );
         }
@@ -75,15 +112,18 @@ export default function Root() {
                 <div className="tabs">
                     <nav className="tab-nav">
                         <ul className="tab-list">
-                            <li>
-                                <button role="tab">Quotes</button>
-                            </li>
-                            <li>
-                                <button role="tab">Liked</button>
-                            </li>
-                            <li>
-                                <button role="tab">Achieved</button>
-                            </li>
+                            {tabs.map((tab) => {
+                                return (
+                                    <li key={tab}>
+                                        <button
+                                            role="tab"
+                                            onClick={() => setTab(tab)}
+                                        >
+                                            {tab}
+                                        </button>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </nav>
                 </div>
