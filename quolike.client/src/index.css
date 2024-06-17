@@ -64,17 +64,6 @@ html, body {
     align-content: center;
 }
 
-.tab-list {
-    display: flex;
-    column-gap: 50px;
-    justify-content: center;
-    list-style-type: none;
-}
-
-    .tab-list button {
-        padding: 3px 50px;
-    }
-
 .quote {
     border: 1px solid red;
 }
