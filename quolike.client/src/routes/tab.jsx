@@ -1,44 +1,10 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-
-
-import { limit } from '../main.jsx'
-import {
-    fetchQuotable,
-    fetchFavorites,
-    fetchArchived
-} from '../quotes.js';
 import Quote from './quote.jsx';
+import { limit } from './root.jsx';
 
-export async function loader({ request }) {
-    const url = new URL(request.url);
-    const page = url.searchParams.get('page') || 1;
-
-    // Fetch quotes from Quotable API
-    const quotableData = await fetchQuotable(page, limit && 6);
-
-    // Fetch favorites and archived from my own API
-    const favoriteQuotes = await fetchFavorites();
-    const archivedQuotes = await fetchArchived();
-
-    // Merge
-    const mergedQuotes = quotableData.results.map(quote => {
-        const isFavorite = favoriteQuotes.results.some(fav => fav.externalId === quote._id);
-        const isArchived = archivedQuotes.results.some(arch => arch.externalId === quote._id);
-        if (isFavorite) {
-            console.log('favorite found');
-        }
-        if (isArchived) {
-            console.log('archived found');
-        }
-        return { ...quote, isFavorite, isArchived };
-    });
-
-    return { results: mergedQuotes, totalPages: quotableData.totalPages };
-}
-
-export default function Index() {
+export default function Tab() {
     const quotesData = useLoaderData();
     const navigate = useNavigate();
 
@@ -52,7 +18,7 @@ export default function Index() {
     }, [quotesData]);
 
     useEffect(() => {
-        navigate(`/quotes/?page=${page}`);
+        navigate(`/all/?page=${page}`);
         console.log('useEffect called by [page, limit, navigate] changes');
     }, [page, navigate]);
 

@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using QuoLike.Server.Controllers;
 using QuoLike.Server.Data;
 using QuoLike.Server.Data.Repositories;
 
@@ -15,6 +16,7 @@ namespace QuoLike.Server
             builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
             builder.Services.AddDbContext<QuoLikeDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("QuoLikeDbContext")));
+            builder.Services.AddHttpClient();
 
             builder.Services.AddCors(options =>
             {

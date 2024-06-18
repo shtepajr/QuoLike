@@ -1,4 +1,5 @@
 ﻿using QuoLike.Server.DTOs;
+using QuoLike.Server.DTOs.Quotable;
 using QuoLike.Server.Models;
 
 namespace QuoLike.Server.Mappers

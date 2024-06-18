@@ -2,6 +2,20 @@
 
 export const origin = 'https://localhost:7282';
 
+export async function fetchQuotableMerged(page, limit) {
+    try {
+        const response = await fetch(`${origin}/api/quotes/all?page=${page}&limit=${limit}`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching quotes:', error);
+        throw error;
+    }
+}
+
 export async function fetchQuotable(page, limit) {
     try {
         const response = await fetch(`https://api.quotable.io/quotes?page=${page}&limit=${limit}`);

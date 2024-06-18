@@ -51,8 +51,8 @@ namespace QuoLike.Server.Data.Repositories
 
             // Pagination
             var totalItems = await quotes.CountAsync();
-            var skipNumber = (queryObject.Page - 1) * queryObject.PageSize;
-            quotes = quotes.Skip(skipNumber).Take(queryObject.PageSize);
+            var skipNumber = (queryObject.Page - 1) * queryObject.Limit;
+            quotes = quotes.Skip(skipNumber).Take(queryObject.Limit);
 
             return await quotes.ToListAsync();
         }

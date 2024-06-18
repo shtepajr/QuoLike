@@ -6,14 +6,10 @@ import {
 } from "react-router-dom";
 
 // my
-import './index.css'
+import './index.css';
 import ErrorPage from "./error-page";
-import Root from './routes/root.jsx'
-import Index, { loader as indexLoader } from './routes/index.jsx';
-import Favorites, { loader as favoritesLoader } from './routes/favorites.jsx';
-import Archived, { loader as archivedLoader } from './routes/archived.jsx';
-
-export const limit = 6;
+import Root, { allLoader, favoritesLoader, archivedLoader } from './routes/root.jsx';
+import Tab from './routes/tab.jsx';
 
 const router = createBrowserRouter([
     {
@@ -24,9 +20,9 @@ const router = createBrowserRouter([
         action: () => { console.log('action called'); },
         children: [
             //{ index: true, element: <Index /> },
-            { path: "quotes", element: <Index />, loader: indexLoader, action: () => { console.log('action called'); } },
-            { path: "favorites", element: <Favorites />, loader: favoritesLoader, action: () => { console.log('action called'); } },
-            { path: "archived", element: <Archived />, loader: archivedLoader, action: () => { console.log('action called'); } },
+            { path: "all", element: <Tab />, loader: allLoader, action: () => { console.log('action called'); } },
+            { path: "favorites", element: <Tab />, loader: favoritesLoader, action: () => { console.log('action called'); } },
+            { path: "archived", element: <Tab />, loader: archivedLoader, action: () => { console.log('action called'); } },
         ]
     },
 ]);

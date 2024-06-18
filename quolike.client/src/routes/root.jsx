@@ -1,15 +1,32 @@
 import { useEffect, useState } from 'react';
-import '../index.css';
-
+import { Outlet, NavLink} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
+import '../index.css';
+import { fetchQuotableMerged } from '../quotes.js'
 
-import {
-    Outlet,
-    NavLink,
-} from "react-router-dom";
+export const limit = 6;
+
+export async function allLoader({ request }) {
+    const url = new URL(request.url);
+    const page = url.searchParams.get('page') || 1;
+
+    const data = await fetchQuotableMerged(page, limit && 6);
+
+    return { ...data };
+}
+
+export async function favoritesLoader({ request }) {
+    const favoriteQuotes = await fetchFavorites();
+    return { results: favoriteQuotes, totalPages: favoriteQuotes.totalPages };
+}
+
+export async function archivedLoader({ request }) {
+    const favoriteQuotes = await fetchArchived();
+    return { results: favoriteQuotes, totalPages: favoriteQuotes.totalPages };
+}
 
 export default function Root() {
-    const tabs = ['quotes', 'favorites', 'archived'];
+    const tabs = ['all', 'favorites', 'archived'];
     return (
         <>
             <header className="header">
@@ -39,3 +56,4 @@ export default function Root() {
         </>
     );
 }
+
