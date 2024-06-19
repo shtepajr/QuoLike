@@ -10,6 +10,7 @@ using QuoLike.Server.DTOs.Quotable;
 using QuoLike.Server.Helpers;
 using QuoLike.Server.Mappers;
 using QuoLike.Server.Models;
+using System.Collections.Generic;
 using System.Text.Json;
 
 namespace QuoLike.Server.Controllers
@@ -29,7 +30,7 @@ namespace QuoLike.Server.Controllers
         }
 
         [HttpGet]
-        [Route("all")]
+        [Route("merged")]
         public async Task<IActionResult> GetQuotableMerged([FromQuery] QueryObject queryObject)
         {
             string requestUrl = $"https://api.quotable.io/quotes?page={queryObject.Page}&limit={queryObject.Limit}";
@@ -55,7 +56,7 @@ namespace QuoLike.Server.Controllers
                 }
             }
 
-            // Merge
+            // Merge quotables with db quotes (left join)
             var merged = from qtb in quotableQuotes.Results
                          join q in dbQuotes on qtb._id equals q.ExternalId into gj
                          from subgroup in gj.DefaultIfEmpty()
@@ -75,11 +76,79 @@ namespace QuoLike.Server.Controllers
 
             return Ok(new
             {
+                Page = queryObject.Page,
+                Count = merged.Count(),
                 TotalCount = quotableQuotes.TotalCount,
                 TotalPages = (int)Math.Ceiling(quotableQuotes.TotalCount / (double)queryObject.Limit),
                 Results = merged
             });
 
+        }
+
+        [HttpGet]
+        [Route("all")]
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject queryObject)
+        {
+            var dbQuotes = await _quoteRepository.GetPaginatedAsync(queryObject);
+            int totalDbQuotes = await _quoteRepository.GetTotalAsync();
+            int totalDbPages = (int)Math.Ceiling(totalDbQuotes / (double)queryObject.Limit);
+
+            List<QuotableQuote> quotables = new();
+            int matchesCounter = 0;
+;
+            // TODO: fix the infinite loop
+            for (int i = 0; i < totalDbPages; i++)
+            {
+                string requestUrl = $"https://api.quotable.io/quotes?page={i + 1}&limit={queryObject.Limit}";
+                var response = await _httpClient.GetAsync(requestUrl);
+                var data = await response.Content.ReadAsStringAsync();
+
+                var quotableQuotes = JsonConvert.DeserializeObject<QuotableQuoteConnection>(data);
+
+                if (quotableQuotes is null || quotableQuotes?.Count < 1)
+                {
+                    break;
+                }
+                else
+                {
+                    var matches = quotableQuotes.Results
+                        .Where(qtb => dbQuotes.Any(q => q.ExternalId == qtb._id));
+                    quotables.AddRange(matches);
+
+                    matchesCounter += matches.Count();
+
+                    if (matchesCounter == dbQuotes.Count())
+                    {
+                        break;
+                    }
+                }
+            }
+
+            // Merge db quotes with quotables (inner join)
+            var merged = from q in dbQuotes
+                         join qtb in quotables on q.ExternalId equals qtb._id
+                         select new
+                         {
+                             qtb.Tags,
+                             qtb._id,
+                             qtb.Content,
+                             qtb.Author,
+                             qtb.AuthorSlug,
+                             qtb.Length,
+                             qtb.DateAdded,
+                             qtb.DateModified,
+                             q.isFavorite,
+                             q.isArchived,
+                         };
+
+            return Ok(new
+            {
+                Page = queryObject.Page,
+                Count = merged.Count(),
+                TotalCount = totalDbQuotes,
+                TotalPages = totalDbPages,
+                Results = merged
+            });
         }
 
         [HttpGet("{id}")]

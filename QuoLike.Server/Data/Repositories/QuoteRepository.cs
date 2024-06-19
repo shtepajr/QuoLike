@@ -57,6 +57,11 @@ namespace QuoLike.Server.Data.Repositories
             return await quotes.ToListAsync();
         }
 
+        public async Task<int> GetTotalAsync()
+        {
+            return await _context.Quotes.CountAsync();
+        }
+
         public async Task<Quote?> GetAsync(string id)
         {
             return await _context.Quotes.FindAsync(id);

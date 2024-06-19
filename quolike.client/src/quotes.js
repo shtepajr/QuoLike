@@ -4,7 +4,7 @@ export const origin = 'https://localhost:7282';
 
 export async function fetchQuotableMerged(page, limit) {
     try {
-        const response = await fetch(`${origin}/api/quotes/all?page=${page}&limit=${limit}`);
+        const response = await fetch(`${origin}/api/quotes/merged?page=${page}&limit=${limit}`);
         if (!response.ok) {
             throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
         }
@@ -16,9 +16,9 @@ export async function fetchQuotableMerged(page, limit) {
     }
 }
 
-export async function fetchQuotable(page, limit) {
+export async function fetchFavoritesMerged(page, limit) {
     try {
-        const response = await fetch(`https://api.quotable.io/quotes?page=${page}&limit=${limit}`);
+        const response = await fetch(`${origin}/api/quotes/all?page=${page}&limit=${limit}&isFavorite=true`);
         if (!response.ok) {
             throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
         }
@@ -26,12 +26,13 @@ export async function fetchQuotable(page, limit) {
         return data;
     } catch (error) {
         console.error('Error fetching quotes:', error);
-        throw error; // Re-throw the error for potential handling at a higher level
+        throw error;
     }
 }
-export async function fetchFavorites() {
+
+export async function fetchArchivedMerged(page, limit) {
     try {
-        const response = await fetch(`${origin}/api/quotes?isFavorite=true`);
+        const response = await fetch(`${origin}/api/quotes/all?page=${page}&limit=${limit}&isArchived=true`);
         if (!response.ok) {
             throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
         }
@@ -57,22 +58,22 @@ export async function fetchArchived() {
     }
 }
 
-export async function createQuote(quote) {
-    try {
-        const response = await fetch(`${origin}/api/quotes`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(quote),
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to create quote: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error creating quote:', error);
-        throw error;
-    }
-}
+//export async function createQuote(quote) {
+//    try {
+//        const response = await fetch(`${origin}/api/quotes`, {
+//            method: 'POST',
+//            headers: {
+//                'Content-Type': 'application/json',
+//            },
+//            body: JSON.stringify(quote),
+//        });
+//        if (!response.ok) {
+//            throw new Error(`Failed to create quote: ${response.status} ${response.statusText}`);
+//        }
+//        const data = await response.json();
+//        return data;
+//    } catch (error) {
+//        console.error('Error creating quote:', error);
+//        throw error;
+//    }
+//}

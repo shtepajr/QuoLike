@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import ReactPaginate from 'react-paginate';
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate, redirect } from 'react-router-dom';
 import Quote from './quote.jsx';
 import { limit } from './root.jsx';
+import Paginate from '../paginate.jsx'
 
 export default function Tab() {
     const quotesData = useLoaderData();
@@ -18,7 +18,7 @@ export default function Tab() {
     }, [quotesData]);
 
     useEffect(() => {
-        navigate(`/all/?page=${page}`);
+        navigate(`?page=${page}`);
         console.log('useEffect called by [page, limit, navigate] changes');
     }, [page, navigate]);
 
@@ -49,28 +49,10 @@ export default function Tab() {
             <div className="quotes">
                 {quotes}
             </div>
-            <div className="pagination">
-                <ReactPaginate
-                    nextLabel="next >"
-                    onPageChange={handlePageClick}
-                    pageRangeDisplayed={3}
-                    marginPagesDisplayed={2}
-                    pageCount={totalPages}
-                    previousLabel="< previous"
-                    pageClassName="page-item"
-                    pageLinkClassName="page-link"
-                    previousClassName="page-item"
-                    previousLinkClassName="page-link"
-                    nextClassName="page-item"
-                    nextLinkClassName="page-link"
-                    breakLabel="..."
-                    breakClassName="page-item"
-                    breakLinkClassName="page-link"
-                    containerClassName="pagination"
-                    activeClassName="active"
-                    renderOnZeroPageCount={null}
-                />
-            </div>
+            <Paginate
+                handlePageClick={handlePageClick}
+                totalPages={totalPages}
+            />
         </>
     );
 }

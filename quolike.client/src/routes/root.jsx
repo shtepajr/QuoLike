@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, NavLink} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../index.css';
-import { fetchQuotableMerged } from '../quotes.js'
+import { fetchQuotableMerged, fetchFavoritesMerged } from '../quotes.js'
 
 export const limit = 6;
 
@@ -16,8 +16,12 @@ export async function allLoader({ request }) {
 }
 
 export async function favoritesLoader({ request }) {
-    const favoriteQuotes = await fetchFavorites();
-    return { results: favoriteQuotes, totalPages: favoriteQuotes.totalPages };
+    const url = new URL(request.url);
+    const page = url.searchParams.get('page') || 1;
+
+    const data = await fetchFavoritesMerged(page, limit && 6);
+
+    return { ...data };
 }
 
 export async function archivedLoader({ request }) {

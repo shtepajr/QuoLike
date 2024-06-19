@@ -7,6 +7,7 @@ namespace QuoLike.Server.Data.Repositories
     {
         Task<IEnumerable<Quote>> GetPaginatedAsync(QueryObject queryObject);
         Task<IEnumerable<Quote>> GetAllAsync(QueryObject queryObject);
+        Task<int> GetTotalAsync();
         Task<Quote> GetAsync(string id);
         Task<Quote> AddAsync(Quote quote);
         Task<Quote> UpdateAsync(Quote quoteSelect);
