@@ -1,6 +1,8 @@
 
 using Microsoft.EntityFrameworkCore;
+using QuoLike.Server.Controllers;
 using QuoLike.Server.Data;
+using QuoLike.Server.Data.Repositories;
 
 namespace QuoLike.Server
 {
@@ -11,9 +13,23 @@ namespace QuoLike.Server
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddDbContext<QuoLikeDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("QuoLikeDbContext")));
+            builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
+            builder.Services.AddDbContext<QuoLikeDbContext>(options =>
+                options.UseSqlite(builder.Configuration.GetConnectionString("QuoLikeDbContext")));
+            builder.Services.AddHttpClient();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.WithOrigins("https://localhost:5173")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+                });
+            });
             builder.Services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -31,6 +47,9 @@ namespace QuoLike.Server
             }
 
             app.UseHttpsRedirection();
+
+            // Use CORS
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
