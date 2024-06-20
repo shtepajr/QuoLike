@@ -3,7 +3,7 @@
     public class QuoteCreateDTO
     {
         public string ExternalId { get; set; }
-        public bool isFavorite { get; set; }
-        public bool isArchived { get; set; }
+        public bool? IsFavorite { get; set; }
+        public bool? IsArchived { get; set; }
     }
 }

@@ -25,11 +25,11 @@ namespace QuoLike.Server.Data.Repositories
             // Tabs
             if (queryObject.isFavorite.HasValue)
             {
-                quotes = quotes.Where(q => q.isFavorite == queryObject.isFavorite);
+                quotes = quotes.Where(q => q.IsFavorite == queryObject.isFavorite);
             }
             else if (queryObject.isArchived.HasValue)
             {
-                quotes = quotes.Where(q => q.isArchived == queryObject.isArchived);
+                quotes = quotes.Where(q => q.IsArchived == queryObject.isArchived);
             }
 
             return await quotes.ToListAsync();
@@ -42,11 +42,11 @@ namespace QuoLike.Server.Data.Repositories
             // Tabs
             if (queryObject.isFavorite.HasValue)
             {
-                quotes = quotes.Where(q => q.isFavorite == queryObject.isFavorite);
+                quotes = quotes.Where(q => q.IsFavorite == queryObject.isFavorite);
             }
             else if (queryObject.isArchived.HasValue)
             {
-                quotes = quotes.Where(q => q.isArchived == queryObject.isArchived);
+                quotes = quotes.Where(q => q.IsArchived == queryObject.isArchived);
             }
 
             // Pagination

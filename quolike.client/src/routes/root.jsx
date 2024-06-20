@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Outlet, NavLink} from 'react-router-dom';
+import { Outlet, NavLink, redirect, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../index.css';
-import { fetchQuotableMerged, fetchFavoritesMerged } from '../quotes.js'
+import {
+    fetchQuotableMerged,
+    fetchFavoritesMerged,
+    fetchArchivedMerged,
+    createEntry
+} from '../quotes-data.js'
 
 export const limit = 6;
 
@@ -25,8 +30,28 @@ export async function favoritesLoader({ request }) {
 }
 
 export async function archivedLoader({ request }) {
-    const favoriteQuotes = await fetchArchived();
-    return { results: favoriteQuotes, totalPages: favoriteQuotes.totalPages };
+    const url = new URL(request.url);
+    const page = url.searchParams.get('page') || 1;
+
+    const data = await fetchArchivedMerged(page, limit && 6);
+
+    return { ...data };
+}
+
+export async function favoriteAction({ request, params }) {
+    const formData = await request.formData();
+    const model = Object.fromEntries(formData);
+    if (model.isFavorite !== undefined) {
+        model.isFavorite = model.isFavorite === 'true';
+    }
+
+    if (model.isArchived !== undefined) {
+        model.isArchived = model.isArchived === 'true';
+    }
+
+    const tabName = model.tabName || 'all';
+
+    return await createEntry(model);
 }
 
 export default function Root() {

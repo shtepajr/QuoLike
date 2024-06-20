@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLoaderData, useNavigate, redirect } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import Quote from './quote.jsx';
 import { limit } from './root.jsx';
 import Paginate from '../paginate.jsx'

@@ -58,22 +58,23 @@ export async function fetchArchived() {
     }
 }
 
-//export async function createQuote(quote) {
-//    try {
-//        const response = await fetch(`${origin}/api/quotes`, {
-//            method: 'POST',
-//            headers: {
-//                'Content-Type': 'application/json',
-//            },
-//            body: JSON.stringify(quote),
-//        });
-//        if (!response.ok) {
-//            throw new Error(`Failed to create quote: ${response.status} ${response.statusText}`);
-//        }
-//        const data = await response.json();
-//        return data;
-//    } catch (error) {
-//        console.error('Error creating quote:', error);
-//        throw error;
-//    }
-//}
+export async function createEntry(quote) {
+    try {
+        const response = await fetch(`${origin}/api/quotes/create`, {
+            method: 'POST',
+            mode: "cors",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(quote),
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create quote: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error creating quote:', error);
+        throw error;
+    }
+}

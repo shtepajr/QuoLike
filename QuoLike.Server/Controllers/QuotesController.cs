@@ -70,8 +70,8 @@ namespace QuoLike.Server.Controllers
                              qtb.Length,
                              qtb.DateAdded,
                              qtb.DateModified,
-                             isFavorite = subgroup is null ? false : subgroup.isFavorite,
-                             isArchived = subgroup is null ? false : subgroup.isFavorite,
+                             isFavorite = subgroup is null ? false : subgroup.IsFavorite,
+                             isArchived = subgroup is null ? false : subgroup.IsFavorite,
                          };
 
             return Ok(new
@@ -95,8 +95,8 @@ namespace QuoLike.Server.Controllers
 
             List<QuotableQuote> quotables = new();
             int matchesCounter = 0;
-;
-            // TODO: fix the infinite loop
+;           
+            // Find quotable matches
             for (int i = 0; i < totalDbPages; i++)
             {
                 string requestUrl = $"https://api.quotable.io/quotes?page={i + 1}&limit={queryObject.Limit}";
@@ -137,8 +137,8 @@ namespace QuoLike.Server.Controllers
                              qtb.Length,
                              qtb.DateAdded,
                              qtb.DateModified,
-                             q.isFavorite,
-                             q.isArchived,
+                             q.IsFavorite,
+                             q.IsArchived,
                          };
 
             return Ok(new
@@ -166,6 +166,7 @@ namespace QuoLike.Server.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         public async Task<IActionResult> Create([FromBody] QuoteCreateDTO quote)
         {
             if (!ModelState.IsValid)
@@ -177,6 +178,7 @@ namespace QuoLike.Server.Controllers
         }
 
         [HttpPut("{id}")]
+        //[Route("update")]
         public async Task<IActionResult> Update(string id, [FromBody] QuoteUpdateDTO quote)
         {
             if (!ModelState.IsValid)
@@ -193,6 +195,7 @@ namespace QuoLike.Server.Controllers
         }
 
         [HttpDelete("{id}")]
+        //[Route("delete")]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)

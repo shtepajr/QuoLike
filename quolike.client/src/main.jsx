@@ -8,7 +8,12 @@ import {
 // my
 import './index.css';
 import ErrorPage from "./error-page";
-import Root, { allLoader, favoritesLoader, archivedLoader } from './routes/root.jsx';
+import Root, {
+    allLoader,
+    favoritesLoader,
+    archivedLoader,
+    favoriteAction
+} from './routes/root.jsx';
 import Tab from './routes/tab.jsx';
 
 const router = createBrowserRouter([
@@ -20,9 +25,30 @@ const router = createBrowserRouter([
         action: () => { console.log('action called'); },
         children: [
             //{ index: true, element: <Index /> },
-            { path: "all", element: <Tab />, loader: allLoader, action: () => { console.log('action called'); } },
-            { path: "favorites", element: <Tab />, loader: favoritesLoader, action: () => { console.log('action called'); } },
-            { path: "archived", element: <Tab />, loader: archivedLoader, action: () => { console.log('action called'); } },
+            {
+                path: "all",
+                element: <Tab />,
+                loader: allLoader,
+                action: () => { console.log('action called'); },
+                children: [
+                    {
+                        path: "create",
+                        action: favoriteAction,
+                    }
+                ],
+            },
+            {
+                path: "favorites",
+                element: <Tab />,
+                loader: favoritesLoader,
+                action: () => { console.log('action called'); }
+            },
+            {
+                path: "archived",
+                element: <Tab />,
+                loader: archivedLoader,
+                action: () => { console.log('action called'); }
+            },
         ]
     },
 ]);

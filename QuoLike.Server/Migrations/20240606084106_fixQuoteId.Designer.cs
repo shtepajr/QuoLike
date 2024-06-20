@@ -28,10 +28,10 @@ namespace QuoLike.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("isArchived")
+                    b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("isFavorite")
+                    b.Property<bool>("IsFavorite")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("QuoteId");

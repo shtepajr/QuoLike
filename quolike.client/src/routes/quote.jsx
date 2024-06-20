@@ -3,9 +3,12 @@
     redirect,
     useNavigation,
     useSubmit,
-    useFetcher,
+    useFetcher
 } from "react-router-dom";
+import { favoriteAction } from "./root.jsx"
+
 export default function Quote(props) {
+    const fetcher = useFetcher();
     let isFavorite = props.isFavorite;
     let isArchived = props.isArchived;
 
@@ -15,41 +18,19 @@ export default function Quote(props) {
             <div className="quote--content">{props.content}</div>
             <div className="quote--author">{props.author}</div>
             {props.tags && <div className="quote--tags">{props.tags}</div>}
-
-            {/*<button value={isFavorite ? false : true} onClick={() => props.toggleFavorite(props.id)}>*/}
-            {/*    {isFavorite ? "★" : "☆"}*/}
-            {/*</button>*/}
-            <Favorite quote={props}></Favorite>
+            <fetcher.Form method="post" action="create">
+                <input hidden name="externalId" defaultValue={props.id}></input>
+                <button
+                    name="isFavorite"
+                    value={props.isFavorite ? false : true}
+                    aria-label={props.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                >
+                    {props.isFavorite ? "★" : "☆"}
+                </button>
+            </fetcher.Form>
             <button value={isArchived ? false : true} onClick={props.toggleArchived}>
                 {isArchived ? "📓" : "🗒"}
             </button>
-            <form method="post">
-                
-            </form>
-            <form method="post">
-
-            </form>
         </div>
-    );
-}
-
-function Favorite({ quote }) {
-    const fetcher = useFetcher();
-    let isFavorite = quote.isFavorite;
-
-    if (fetcher.formData) {
-        isFavorite = fetcher.formData.get("isFavorite") === "true";
-    }
-    return (
-        <fetcher.Form method="post">
-            <input hidden name="id" defaultValue={quote.id}></input>
-            <button
-                name="isFavorite"
-                value={isFavorite ? "false" : "true"}
-                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-            >
-                {isFavorite ? "★" : "☆"}
-            </button>
-        </fetcher.Form>
     );
 }

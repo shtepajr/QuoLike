@@ -12,8 +12,8 @@ namespace QuoLike.Server.Mappers
             {
                 QuoteId = updateDTO.QuoteId,
                 ExternalId = updateDTO.ExternalId,
-                isArchived = updateDTO.isArchived,
-                isFavorite = updateDTO.isFavorite            
+                IsArchived = updateDTO.IsArchived,
+                IsFavorite = updateDTO.IsFavorite            
             };
         }
 
@@ -23,8 +23,8 @@ namespace QuoLike.Server.Mappers
             {
                 QuoteId = quoteModel.QuoteId,
                 ExternalId = quoteModel.ExternalId,
-                isArchived = quoteModel.isArchived,
-                isFavorite = quoteModel.isFavorite
+                isArchived = quoteModel.IsArchived,
+                isFavorite = quoteModel.IsFavorite
             };
         }
 
@@ -33,8 +33,8 @@ namespace QuoLike.Server.Mappers
             return new Quote()
             {
                 ExternalId = createDTO.ExternalId,
-                isArchived = createDTO.isArchived,
-                isFavorite = createDTO.isFavorite
+                IsArchived = createDTO.IsArchived,
+                IsFavorite = createDTO.IsFavorite
             };
         }
     }
