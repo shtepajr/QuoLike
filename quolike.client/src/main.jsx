@@ -34,8 +34,12 @@ const router = createBrowserRouter([
                     {
                         path: "create",
                         action: favoriteAction,
+                    },
+                    {
+                        path: "edit",
+                        action: favoriteAction,
                     }
-                ],
+                ]
             },
             {
                 path: "favorites",

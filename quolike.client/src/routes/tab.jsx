@@ -3,6 +3,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import Quote from './quote.jsx';
 import { limit } from './root.jsx';
 import Paginate from '../paginate.jsx'
+//import { nanoid } from 'nanoid'
 
 export default function Tab() {
     const quotesData = useLoaderData();

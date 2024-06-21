@@ -29,8 +29,7 @@ namespace QuoLike.Server.Controllers
             _httpClient = httpClient;
         }
 
-        [HttpGet]
-        [Route("merged")]
+        [HttpGet("merged")]
         public async Task<IActionResult> GetQuotableMerged([FromQuery] QueryObject queryObject)
         {
             string requestUrl = $"https://api.quotable.io/quotes?page={queryObject.Page}&limit={queryObject.Limit}";
@@ -85,8 +84,7 @@ namespace QuoLike.Server.Controllers
 
         }
 
-        [HttpGet]
-        [Route("all")]
+        [HttpGet("all")]
         public async Task<IActionResult> GetAll([FromQuery] QueryObject queryObject)
         {
             var dbQuotes = await _quoteRepository.GetPaginatedAsync(queryObject);
@@ -95,11 +93,11 @@ namespace QuoLike.Server.Controllers
 
             List<QuotableQuote> quotables = new();
             int matchesCounter = 0;
-;           
+            ;
             // Find quotable matches
-            for (int i = 0; i < totalDbPages; i++)
+            for (int i = 1; i < totalDbPages; i++)
             {
-                string requestUrl = $"https://api.quotable.io/quotes?page={i + 1}&limit={queryObject.Limit}";
+                string requestUrl = $"https://api.quotable.io/quotes?page={i}&limit={queryObject.Limit}";
                 var response = await _httpClient.GetAsync(requestUrl);
                 var data = await response.Content.ReadAsStringAsync();
 
@@ -113,6 +111,7 @@ namespace QuoLike.Server.Controllers
                 {
                     var matches = quotableQuotes.Results
                         .Where(qtb => dbQuotes.Any(q => q.ExternalId == qtb._id));
+
                     quotables.AddRange(matches);
 
                     matchesCounter += matches.Count();
@@ -123,6 +122,9 @@ namespace QuoLike.Server.Controllers
                     }
                 }
             }
+
+            // remove quotable duplicates
+            quotables = quotables.GroupBy(qtb => qtb._id).Select(qtb => qtb.First()).ToList();
 
             // Merge db quotes with quotables (inner join)
             var merged = from q in dbQuotes
@@ -165,8 +167,7 @@ namespace QuoLike.Server.Controllers
             return Ok(q.ToQuoteDTO());
         }
 
-        [HttpPost]
-        [Route("create")]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] QuoteCreateDTO quote)
         {
             if (!ModelState.IsValid)
@@ -177,8 +178,7 @@ namespace QuoLike.Server.Controllers
             return CreatedAtAction(nameof(Get), new { id = q.QuoteId }, q.ToQuoteDTO());
         }
 
-        [HttpPut("{id}")]
-        //[Route("update")]
+        [HttpPut("edit/{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] QuoteUpdateDTO quote)
         {
             if (!ModelState.IsValid)
@@ -194,8 +194,7 @@ namespace QuoLike.Server.Controllers
             return Ok(q.ToQuoteDTO());
         }
 
-        [HttpDelete("{id}")]
-        //[Route("delete")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)
