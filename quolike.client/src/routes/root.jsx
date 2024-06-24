@@ -49,8 +49,6 @@ export async function favoriteAction({ request, params }) {
         model.isArchived = model.isArchived === 'true';
     }
 
-    const tabName = model.tabName || 'all';
-
     return await createEntry(model);
 }
 
@@ -70,7 +68,7 @@ export default function Root() {
                             return (
                                 <li key={tab} className="nav-item">
                                     <NavLink
-                                        to={`${tab}`}
+                                        to={`${tab}?page=1`}
                                         className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
                                     >
                                         {tab}

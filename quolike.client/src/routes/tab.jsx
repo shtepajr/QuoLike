@@ -3,24 +3,26 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import Quote from './quote.jsx';
 import { limit } from './root.jsx';
 import Paginate from '../paginate.jsx'
-//import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid'
 
 export default function Tab() {
     const quotesData = useLoaderData();
     const navigate = useNavigate();
 
     // pagination
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(quotesData.page || 1);
     const [totalPages, setTotalPages] = useState(1);
-    const qLimit = useState(limit && 6);
+    //const qLimit = useState(limit && 6);
 
     useEffect(() => {
         setTotalPages(quotesData.totalPages);
+        setPage(quotesData.page || 1);
+        console.log('quotes data changes', quotesData.page);
     }, [quotesData]);
 
     useEffect(() => {
         navigate(`?page=${page}`);
-        console.log('useEffect called by [page, limit, navigate] changes');
+        console.log('page changes', page);
     }, [page, navigate]);
 
     const handlePageClick = (data) => {
@@ -53,6 +55,7 @@ export default function Tab() {
             <Paginate
                 handlePageClick={handlePageClick}
                 totalPages={totalPages}
+                forcePage={page - 1}
             />
         </>
     );

@@ -40,9 +40,11 @@ namespace QuoLike.Server.Controllers
             // Find all quotes in database (by quotable page quotes)
             List<Quote> dbQuotes = new();
 
-            for (int i = 1; ; i++)
+            int dbPage = 1;
+            int totalDbPages = (int)Math.Ceiling(await _quoteRepository.GetTotalAsync() / (double)queryObject.Limit);
+            do
             {
-                var quotes = await _quoteRepository.GetPaginatedAsync(new QueryObject() { Page = i, Limit = 6 });
+                var quotes = await _quoteRepository.GetPaginatedAsync(new QueryObject() { Page = dbPage, Limit = 6 });
 
                 if (quotes.Count() == 0)
                 {
@@ -53,7 +55,8 @@ namespace QuoLike.Server.Controllers
                     dbQuotes.AddRange(quotes
                         .Where(q => quotableQuotes.Results.Any(qtb => qtb._id == q.ExternalId)));
                 }
-            }
+                dbPage++;
+            } while (dbPage <= totalDbPages);
 
             // Merge quotables with db quotes (left join)
             var merged = from qtb in quotableQuotes.Results
@@ -70,7 +73,7 @@ namespace QuoLike.Server.Controllers
                              qtb.DateAdded,
                              qtb.DateModified,
                              isFavorite = subgroup is null ? false : subgroup.IsFavorite,
-                             isArchived = subgroup is null ? false : subgroup.IsFavorite,
+                             isArchived = subgroup is null ? false : subgroup.IsArchived,
                          };
 
             return Ok(new
@@ -92,12 +95,13 @@ namespace QuoLike.Server.Controllers
             int totalDbPages = (int)Math.Ceiling(totalDbQuotes / (double)queryObject.Limit);
 
             List<QuotableQuote> quotables = new();
-            int matchesCounter = 0;
-            ;
+
             // Find quotable matches
-            for (int i = 1; i < totalDbPages; i++)
+            int qtbPage = 1;
+            int qtbTotalPages = 0;
+            do
             {
-                string requestUrl = $"https://api.quotable.io/quotes?page={i}&limit={queryObject.Limit}";
+                string requestUrl = $"https://api.quotable.io/quotes?page={qtbPage}&limit={queryObject.Limit}";
                 var response = await _httpClient.GetAsync(requestUrl);
                 var data = await response.Content.ReadAsStringAsync();
 
@@ -109,22 +113,22 @@ namespace QuoLike.Server.Controllers
                 }
                 else
                 {
+                    qtbTotalPages = quotableQuotes.TotalPages;
                     var matches = quotableQuotes.Results
                         .Where(qtb => dbQuotes.Any(q => q.ExternalId == qtb._id));
 
                     quotables.AddRange(matches);
+                    // remove quotable duplicates
+                    quotables = quotables.GroupBy(qtb => qtb._id).Select(qtb => qtb.First()).ToList();
 
-                    matchesCounter += matches.Count();
 
-                    if (matchesCounter == dbQuotes.Count())
+                    if (quotables.Count() == dbQuotes.Count())
                     {
                         break;
                     }
                 }
-            }
-
-            // remove quotable duplicates
-            quotables = quotables.GroupBy(qtb => qtb._id).Select(qtb => qtb.First()).ToList();
+                qtbPage++;
+            } while (qtbPage <= qtbTotalPages);
 
             // Merge db quotes with quotables (inner join)
             var merged = from q in dbQuotes

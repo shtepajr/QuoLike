@@ -15,6 +15,7 @@ import Root, {
     favoriteAction
 } from './routes/root.jsx';
 import Tab from './routes/tab.jsx';
+import Index from './routes/index.jsx';
 
 const router = createBrowserRouter([
     {
@@ -24,9 +25,12 @@ const router = createBrowserRouter([
         //loader: rootLoader,
         action: () => { console.log('action called'); },
         children: [
-            //{ index: true, element: <Index /> },
             {
-                path: "all",
+                index: true,
+                element: <Index />
+            },
+            {
+                path: "all/:page?",
                 element: <Tab />,
                 loader: allLoader,
                 action: () => { console.log('action called'); },
@@ -42,13 +46,13 @@ const router = createBrowserRouter([
                 ]
             },
             {
-                path: "favorites",
+                path: "favorites/:page?",
                 element: <Tab />,
                 loader: favoritesLoader,
                 action: () => { console.log('action called'); }
             },
             {
-                path: "archived",
+                path: "archived/:page?",
                 element: <Tab />,
                 loader: archivedLoader,
                 action: () => { console.log('action called'); }
