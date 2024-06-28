@@ -61,12 +61,15 @@ namespace QuoLike.Server.Data.Repositories
         {
             return await _context.Quotes.CountAsync();
         }
-
         public async Task<Quote?> GetAsync(string id)
         {
             return await _context.Quotes.FindAsync(id);
         }
-        public async Task<Quote> AddAsync(Quote quote)
+        public async Task<Quote?> GetByExternalIdAsNoTrackingAsync(string externalId)
+        {
+            return await _context.Quotes.AsNoTracking().FirstOrDefaultAsync(q => q.ExternalId == externalId);
+        }
+        public async Task<Quote?> AddAsync(Quote quote)
         {
             var createdQuote = await _context.Quotes.AddAsync(quote);
             await _context.SaveChangesAsync();

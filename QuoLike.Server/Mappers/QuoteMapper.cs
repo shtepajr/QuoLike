@@ -17,6 +17,17 @@ namespace QuoLike.Server.Mappers
             };
         }
 
+        public static QuoteUpdateDTO ToUpdateDTO(this Quote updateDTO)
+        {
+            return new QuoteUpdateDTO()
+            {
+                QuoteId = updateDTO.QuoteId,
+                ExternalId = updateDTO.ExternalId,
+                IsArchived = updateDTO.IsArchived,
+                IsFavorite = updateDTO.IsFavorite
+            };
+        }
+
         public static QuoteDTO ToQuoteDTO(this Quote quoteModel)
         {
             return new QuoteDTO()

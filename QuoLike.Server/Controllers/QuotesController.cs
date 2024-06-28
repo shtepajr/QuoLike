@@ -177,16 +177,29 @@ namespace QuoLike.Server.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var q = await _quoteRepository.AddAsync(quote.ToQuote());
+            var existingQuote = await _quoteRepository.GetByExternalIdAsNoTrackingAsync(quote.ExternalId);
+            if (existingQuote != null)
+            {
+                var updateDTO = quote.ToQuote().ToUpdateDTO();
+                updateDTO.QuoteId = existingQuote.QuoteId;
 
-            return CreatedAtAction(nameof(Get), new { id = q.QuoteId }, q.ToQuoteDTO());
+                return await Update(updateDTO);
+            }
+
+            existingQuote = await _quoteRepository.AddAsync(quote.ToQuote()); 
+            return CreatedAtAction(nameof(Get), new { id = existingQuote.QuoteId }, existingQuote.ToQuoteDTO());
         }
 
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] QuoteUpdateDTO quote)
+        public async Task<IActionResult> Update([FromBody] QuoteUpdateDTO quote)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            if (quote.IsFavorite == false && quote.IsArchived == false)
+            {
+                return await Delete(quote.QuoteId);
+            }
 
             var q = await _quoteRepository.UpdateAsync(quote.ToQuote());
 

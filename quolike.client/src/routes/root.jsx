@@ -6,7 +6,7 @@ import {
     fetchQuotableMerged,
     fetchFavoritesMerged,
     fetchArchivedMerged,
-    createEntry
+    toggleEntry
 } from '../quotes-data.js'
 
 export const limit = 6;
@@ -16,7 +16,7 @@ export async function allLoader({ request }) {
     const page = url.searchParams.get('page') || 1;
 
     const data = await fetchQuotableMerged(page, limit && 6);
-
+    console.log('allLoader: data loaded');
     return { ...data };
 }
 
@@ -25,7 +25,7 @@ export async function favoritesLoader({ request }) {
     const page = url.searchParams.get('page') || 1;
 
     const data = await fetchFavoritesMerged(page, limit && 6);
-
+    console.log('favoritesLoader: data loaded');
     return { ...data };
 }
 
@@ -34,11 +34,11 @@ export async function archivedLoader({ request }) {
     const page = url.searchParams.get('page') || 1;
 
     const data = await fetchArchivedMerged(page, limit && 6);
-
+    console.log('archivedLoader: data loaded');
     return { ...data };
 }
 
-export async function favoriteAction({ request, params }) {
+export async function toggleAction({ request, params }) {
     const formData = await request.formData();
     const model = Object.fromEntries(formData);
     if (model.isFavorite !== undefined) {
@@ -49,7 +49,7 @@ export async function favoriteAction({ request, params }) {
         model.isArchived = model.isArchived === 'true';
     }
 
-    return await createEntry(model);
+    return await toggleEntry(model);
 }
 
 export default function Root() {

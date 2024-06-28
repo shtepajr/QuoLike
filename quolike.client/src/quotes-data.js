@@ -58,7 +58,7 @@ export async function fetchArchived() {
     }
 }
 
-export async function createEntry(quote) {
+export async function toggleEntry(quote) {
     try {
         const response = await fetch(`${origin}/api/quotes/create`, {
             method: 'POST',
@@ -74,26 +74,6 @@ export async function createEntry(quote) {
         return data;
     } catch (error) {
         console.error('Error creating quote:', error);
-        throw error;
-    }
-}
-
-export async function editEntry(quote) {
-    try {
-        const response = await fetch(`${origin}/api/quotes/edit`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(quote),
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to edit quote: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error editing quote:', error);
         throw error;
     }
 }

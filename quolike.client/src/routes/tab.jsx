@@ -12,22 +12,16 @@ export default function Tab() {
     // pagination
     const [page, setPage] = useState(quotesData.page || 1);
     const [totalPages, setTotalPages] = useState(1);
-    //const qLimit = useState(limit && 6);
 
     useEffect(() => {
         setTotalPages(quotesData.totalPages);
         setPage(quotesData.page || 1);
-        console.log('quotes data changes', quotesData.page);
+        console.log('useEffect: quotesData changes with page', quotesData.page);
     }, [quotesData]);
 
-    useEffect(() => {
-        navigate(`?page=${page}`);
-        console.log('page changes', page);
-    }, [page, navigate]);
-
     const handlePageClick = (data) => {
-        setPage(data.selected + 1);
-        console.log('handlePageClick called');
+        navigate(`?page=${data.selected + 1}`);
+        console.log(`handlePageClick called: navigates to the ${data.selected + 1} page`);
     };
 
     let quotes = quotesData?.results?.map(
