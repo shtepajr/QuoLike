@@ -28,12 +28,15 @@ export default function Tab() {
         (quote) => {
             return (
                 <Quote
-                    id={quote._id}
                     key={quote._id}
-                    title={quote.title}
+                    _id={quote._id}
+                    tags={quote.tags}
                     content={quote.content}
                     author={quote.author}
-                    tags={quote.tags}
+                    authorSlug={quote.authorSlug}
+                    length={quote.length}
+                    dateAdded={quote.dateAdded}
+                    dateModified={quote.dateModified}
                     isFavorite={quote.isFavorite}
                     isArchived={quote.isArchived}
                 />

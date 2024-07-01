@@ -41,12 +41,15 @@ export async function archivedLoader({ request }) {
 export async function toggleAction({ request, params }) {
     const formData = await request.formData();
     const model = Object.fromEntries(formData);
+
     if (model.isFavorite !== undefined) {
         model.isFavorite = model.isFavorite === 'true';
     }
-
     if (model.isArchived !== undefined) {
         model.isArchived = model.isArchived === 'true';
+    }
+    if (formData.has('tags')) {
+        model.tags = Array.isArray(model.tags) ? model.tags : [model.tags];
     }
 
     return await toggleEntry(model);

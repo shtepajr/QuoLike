@@ -9,7 +9,7 @@ namespace QuoLike.Server.Data.Repositories
         Task<IEnumerable<Quote>> GetAllAsync(QueryObject queryObject);
         Task<int> GetTotalAsync();
         Task<Quote?> GetAsync(string id);
-        Task<Quote?> GetByExternalIdAsNoTrackingAsync(string externalId);
+        Task<Quote?> GetByExternalIdAsync(string externalId);
         Task<Quote?> AddAsync(Quote quote);
         Task<Quote?> UpdateAsync(Quote quoteSelect);
         Task<Quote?> DeleteAsync(string id);

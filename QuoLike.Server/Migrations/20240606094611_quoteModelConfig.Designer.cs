@@ -25,7 +25,7 @@ namespace QuoLike.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ExternalId")
+                    b.Property<string>("_id")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

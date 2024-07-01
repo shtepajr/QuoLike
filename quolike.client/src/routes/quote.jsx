@@ -7,39 +7,28 @@
 } from "react-router-dom";
 import { toggleAction } from "./root.jsx"
 
-export default function Quote(props) {
+export default function Quote(quote) {
     const fetcher = useFetcher();
-    let isFavorite = props.isFavorite;
-    let isArchived = props.isArchived;
+
+    const handleFavorite = () => {
+        fetcher.submit({ ...quote, isFavorite: !quote.isFavorite }, { method: 'post', action: 'toggle' });
+    };
+
+    const handleArchive = () => {
+        fetcher.submit({ ...quote, isArchived: !quote.isArchived }, { method: 'post', action: 'toggle' });
+    };
 
     return (
         <div className="quote">
-            <div className="quote--title">{props.title}</div>
-            <div className="quote--content">{props.content}</div>
-            <div className="quote--author">{props.author}</div>
-            {props.tags && <div className="quote--tags">{props.tags}</div>}
-            <fetcher.Form method="post" action="toggle">
-                <input hidden name="externalId" defaultValue={props.id}></input>
-                <input hidden name="isArchived" defaultValue={props.isArchived}></input>
-                <button
-                    name="isFavorite"
-                    value={props.isFavorite ? false : true}
-                    aria-label={props.isFavorite ? "Remove from favorites" : "Add to favorites"}
-                >
-                    {props.isFavorite ? "★" : "☆"}
-                </button>
-            </fetcher.Form>
-            <fetcher.Form method="post" action="toggle">
-                <input hidden name="externalId" defaultValue={props.id}></input>
-                <input hidden name="isFavorite" defaultValue={props.isFavorite} ></input>
-                <button
-                    name="isArchived"
-                    value={props.isArchived ? false : true}
-                    aria-label={props.isArchived ? "Remove from archived" : "Add to archived"}
-                >
-                    {props.isArchived ? "📓" : "🗒"}
-                </button>
-            </fetcher.Form>
+            <div className="quote--content">{quote.content}</div>
+            <div className="quote--author">{quote.author}</div>
+            {quote.tags && <div className="quote--tags">{quote.tags}</div>}
+            <button onClick={handleFavorite} aria-label={quote.isFavorite ? "Remove from favorites" : "Add to favorites"} >
+                {quote.isFavorite ? "★" : "☆"}
+            </button>
+            <button onClick={handleArchive} aria-label={quote.isArchived ? "Remove from archived" : "Add to archived"}>
+                {quote.isArchived ? "📓" : "🗒"}
+            </button>
         </div>
     );
 }

@@ -60,6 +60,7 @@ export async function fetchArchived() {
 
 export async function toggleEntry(quote) {
     try {
+        console.log(quote);
         const response = await fetch(`${origin}/api/quotes/create`, {
             method: 'POST',
             headers: {

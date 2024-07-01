@@ -1,9 +1,9 @@
-﻿namespace QuoLike.Server.DTOs.Quotable
+﻿namespace QuoLike.Server.Models.Quotable
 {
     public class QuotableQuoteConnection
     {
         public int Count { get; set; }
-        public int TotalCount {  get; set; }
+        public int TotalCount { get; set; }
         public int Page { get; set; }
         public int TotalPages { get; set; }
         public List<QuotableQuote>? Results { get; set; }

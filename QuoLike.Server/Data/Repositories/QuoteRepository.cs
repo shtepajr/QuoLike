@@ -65,9 +65,9 @@ namespace QuoLike.Server.Data.Repositories
         {
             return await _context.Quotes.FindAsync(id);
         }
-        public async Task<Quote?> GetByExternalIdAsNoTrackingAsync(string externalId)
+        public async Task<Quote?> GetByExternalIdAsync(string externalId)
         {
-            return await _context.Quotes.AsNoTracking().FirstOrDefaultAsync(q => q.ExternalId == externalId);
+            return await _context.Quotes.FirstOrDefaultAsync(q => q._id == externalId);
         }
         public async Task<Quote?> AddAsync(Quote quote)
         {

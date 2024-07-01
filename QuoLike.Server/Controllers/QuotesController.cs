@@ -6,10 +6,10 @@ using Newtonsoft.Json;
 using QuoLike.Server.Data;
 using QuoLike.Server.Data.Repositories;
 using QuoLike.Server.DTOs;
-using QuoLike.Server.DTOs.Quotable;
 using QuoLike.Server.Helpers;
 using QuoLike.Server.Mappers;
 using QuoLike.Server.Models;
+using QuoLike.Server.Models.Quotable;
 using System.Collections.Generic;
 using System.Text.Json;
 
@@ -53,14 +53,14 @@ namespace QuoLike.Server.Controllers
                 else
                 {
                     dbQuotes.AddRange(quotes
-                        .Where(q => quotableQuotes.Results.Any(qtb => qtb._id == q.ExternalId)));
+                        .Where(q => quotableQuotes.Results.Any(qtb => qtb._id == q._id)));
                 }
                 dbPage++;
             } while (dbPage <= totalDbPages);
 
             // Merge quotables with db quotes (left join)
             var merged = from qtb in quotableQuotes.Results
-                         join q in dbQuotes on qtb._id equals q.ExternalId into gj
+                         join q in dbQuotes on qtb._id equals q._id into gj
                          from subgroup in gj.DefaultIfEmpty()
                          select new
                          {
@@ -87,6 +87,7 @@ namespace QuoLike.Server.Controllers
 
         }
 
+
         [HttpGet("all")]
         public async Task<IActionResult> GetAll([FromQuery] QueryObject queryObject)
         {
@@ -94,66 +95,13 @@ namespace QuoLike.Server.Controllers
             int totalDbQuotes = await _quoteRepository.GetTotalAsync();
             int totalDbPages = (int)Math.Ceiling(totalDbQuotes / (double)queryObject.Limit);
 
-            List<QuotableQuote> quotables = new();
-
-            // Find quotable matches
-            int qtbPage = 1;
-            int qtbTotalPages = 0;
-            do
-            {
-                string requestUrl = $"https://api.quotable.io/quotes?page={qtbPage}&limit={queryObject.Limit}";
-                var response = await _httpClient.GetAsync(requestUrl);
-                var data = await response.Content.ReadAsStringAsync();
-
-                var quotableQuotes = JsonConvert.DeserializeObject<QuotableQuoteConnection>(data);
-
-                if (quotableQuotes is null || quotableQuotes?.Count < 1)
-                {
-                    break;
-                }
-                else
-                {
-                    qtbTotalPages = quotableQuotes.TotalPages;
-                    var matches = quotableQuotes.Results
-                        .Where(qtb => dbQuotes.Any(q => q.ExternalId == qtb._id));
-
-                    quotables.AddRange(matches);
-                    // remove quotable duplicates
-                    quotables = quotables.GroupBy(qtb => qtb._id).Select(qtb => qtb.First()).ToList();
-
-
-                    if (quotables.Count() == dbQuotes.Count())
-                    {
-                        break;
-                    }
-                }
-                qtbPage++;
-            } while (qtbPage <= qtbTotalPages);
-
-            // Merge db quotes with quotables (inner join)
-            var merged = from q in dbQuotes
-                         join qtb in quotables on q.ExternalId equals qtb._id
-                         select new
-                         {
-                             qtb.Tags,
-                             qtb._id,
-                             qtb.Content,
-                             qtb.Author,
-                             qtb.AuthorSlug,
-                             qtb.Length,
-                             qtb.DateAdded,
-                             qtb.DateModified,
-                             q.IsFavorite,
-                             q.IsArchived,
-                         };
-
             return Ok(new
             {
                 Page = queryObject.Page,
-                Count = merged.Count(),
+                Count = dbQuotes.Count(),
                 TotalCount = totalDbQuotes,
                 TotalPages = totalDbPages,
-                Results = merged
+                Results = dbQuotes
             });
         }
 
@@ -177,7 +125,7 @@ namespace QuoLike.Server.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var existingQuote = await _quoteRepository.GetByExternalIdAsNoTrackingAsync(quote.ExternalId);
+            var existingQuote = await _quoteRepository.GetByExternalIdAsync(quote._id);
             if (existingQuote != null)
             {
                 var updateDTO = quote.ToQuote().ToUpdateDTO();
@@ -186,7 +134,7 @@ namespace QuoLike.Server.Controllers
                 return await Update(updateDTO);
             }
 
-            existingQuote = await _quoteRepository.AddAsync(quote.ToQuote()); 
+            existingQuote = await _quoteRepository.AddAsync(quote.ToQuote());
             return CreatedAtAction(nameof(Get), new { id = existingQuote.QuoteId }, existingQuote.ToQuoteDTO());
         }
 
@@ -196,12 +144,23 @@ namespace QuoLike.Server.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var existingQuote = await _quoteRepository.GetByExternalIdAsync(quote._id);
+            if (existingQuote == null)
+            {
+                return NotFound("Quote not found");
+            }
+
+            // delete if not favorite and not archived
             if (quote.IsFavorite == false && quote.IsArchived == false)
             {
                 return await Delete(quote.QuoteId);
             }
 
-            var q = await _quoteRepository.UpdateAsync(quote.ToQuote());
+            // update
+            existingQuote.IsFavorite = quote.IsFavorite;
+            existingQuote.IsArchived = quote.IsArchived;
+
+            var q = await _quoteRepository.UpdateAsync(existingQuote);
 
             if (q == null)
             {
