@@ -185,23 +185,5 @@ namespace QuoLike.Server.Controllers
 
             return Ok(q.ToQuoteDTO());
         }
-
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll([FromQuery] QueryObject queryObject)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
-
-        //    var quotes = await _quoteRepository.GetAllAsync(queryObject);
-
-        //    var quoteDtos = quotes.Select(s => s.ToQuoteDTO());
-
-        //    return Ok(new
-        //    {
-        //        TotalCount = quotes.Count(),
-        //        TotalPages = (int)Math.Ceiling(quotes.Count() / (double)queryObject.Limit),
-        //        Results = quoteDtos
-        //    });
-        //}
     }
 }
