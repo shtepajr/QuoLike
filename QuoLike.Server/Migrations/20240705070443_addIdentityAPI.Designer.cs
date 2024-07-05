@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuoLike.Server.Data;
 
@@ -10,9 +11,11 @@ using QuoLike.Server.Data;
 namespace QuoLike.Server.Migrations
 {
     [DbContext(typeof(QuoLikeDbContext))]
-    partial class QuoLikeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240705070443_addIdentityAPI")]
+    partial class addIdentityAPI
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");

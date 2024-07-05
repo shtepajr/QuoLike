@@ -1,4 +1,6 @@
 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuoLike.Server.Controllers;
 using QuoLike.Server.Data;
@@ -18,6 +20,10 @@ namespace QuoLike.Server
                 options.UseSqlite(builder.Configuration.GetConnectionString("QuoLikeDbContext")));
             builder.Services.AddHttpClient();
 
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>() // Identity API 1/2
+                .AddEntityFrameworkStores<QuoLikeDbContext>();
+
+            // Cors policy 1/2
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", builder =>
@@ -48,11 +54,23 @@ namespace QuoLike.Server
 
             app.UseHttpsRedirection();
 
-            // Use CORS
-            app.UseCors("CorsPolicy");
+            app.UseCors("CorsPolicy"); // Cors policy 2/2
 
             app.UseAuthorization();
 
+            app.MapIdentityApi<IdentityUser>(); // Identity API 2/2
+            app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
+                [FromBody] object empty) =>
+            {
+                if (empty != null)
+                {
+                    await signInManager.SignOutAsync();
+                    return Results.Ok();
+                }
+                return Results.Unauthorized();
+            })
+            .WithOpenApi()
+            .RequireAuthorization();
 
             app.MapControllers();
 

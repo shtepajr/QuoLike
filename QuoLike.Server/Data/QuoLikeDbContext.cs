@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using QuoLike.Server.Models;
 
 namespace QuoLike.Server.Data
 {
-    public class QuoLikeDbContext : DbContext
+    public class QuoLikeDbContext : IdentityDbContext<IdentityUser>
     {
         public DbSet<Quote> Quotes { get; set; }
         public QuoLikeDbContext(DbContextOptions<QuoLikeDbContext> options) : base(options)
@@ -19,6 +21,7 @@ namespace QuoLike.Server.Data
             modelBuilder.Entity<Quote>()
                 .Property(q => q.QuoteId)
                 .ValueGeneratedOnAdd();
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
