@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { Outlet, NavLink, redirect, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../index.css';
 import {
@@ -8,6 +7,7 @@ import {
     fetchArchivedMerged,
     toggleEntry
 } from '../quotes-data.js'
+import { useAuth } from '../hooks/useAuth';
 
 export const limit = 6;
 
@@ -56,15 +56,22 @@ export async function toggleAction({ request, params }) {
 }
 
 export default function Root() {
+    const { logout } = useAuth();
+
+    const handleLogout = () => {
+        logout();
+    };
+
     return (
         <>
             <header className="header">
                 <NavLink to="/">QuoLike</NavLink>
                 <button>Dark mode</button>
                 <NavLink to="profile">Profile</NavLink>
+                <button onClick={handleLogout}>Logout</button>
             </header>
             <main className="main">
-                <Outlet/>
+                <Outlet />
             </main>
         </>
     );

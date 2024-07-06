@@ -1,11 +1,6 @@
 ﻿import {
-    Form,
-    redirect,
-    useNavigation,
-    useSubmit,
     useFetcher
 } from "react-router-dom";
-import { toggleAction } from "./root.jsx"
 
 export default function Quote(quote) {
     const fetcher = useFetcher();

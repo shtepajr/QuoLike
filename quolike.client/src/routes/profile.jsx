@@ -1,5 +1,5 @@
 import { useState } from 'react';
-export default function Profile(user) {
+export default function ProfilePage(user) {
     const [isEditingName, setIsEditingName] = useState(false);
     const [isEditingEmail, setIsEditingEmail] = useState(false);
 

@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-export default function Index() {
+export default function HomePage() {
     return (
         <div>
             <h1>Index</h1>
