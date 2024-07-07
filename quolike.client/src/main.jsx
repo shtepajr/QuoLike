@@ -13,7 +13,7 @@ import Tab from './routes/Tab';
 import HomePage from './routes/Home';
 import ProfilePage from './routes/Profile';
 import { LoginPage } from './routes/Login';
-import RegisterPage from './routes/Register';
+import { RegisterPage } from './routes/Register';
 import { AuthLayout } from './routes/AuthLayout';
 import {
     createBrowserRouter,

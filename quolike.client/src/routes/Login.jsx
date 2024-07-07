@@ -1,30 +1,26 @@
-import { useState } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useState } from 'react';
+import { Link } from "react-router-dom";
+import { useAuth } from '../hooks/useAuth';
+import { login } from '../authentication';
 export const LoginPage = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const { login } = useAuth();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const hookLogin = useAuth().login;
     const handleLogin = async (e) => {
         e.preventDefault();
-        // Here you would usually send a request to your backend to authenticate the user
-        // For the sake of this example, we're using a mock authentication
-        if (username === "user" && password === "password") {
-            // Replace with actual authentication logic
-            await login({ username });
-        } else {
-            alert("Invalid username or password");
-        }
+        const user = await login({ email, password });
+        hookLogin(user);
     };
     return (
         <div>
             <form onSubmit={handleLogin}>
                 <div>
-                    <label htmlFor="username">Username:</label>
+                    <label htmlFor="email">Email:</label>
                     <input
-                        id="username"
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
                 <div>
@@ -37,6 +33,8 @@ export const LoginPage = () => {
                     />
                 </div>
                 <button type="submit">Login</button>
+                <br />
+                <Link to="/register">Register</Link>
             </form>
         </div>
     );
