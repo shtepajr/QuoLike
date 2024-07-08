@@ -1,15 +1,27 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { register, login } from '../authentication';
 export const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const hookLogin = useAuth().login;
+    const navigate = useNavigate();
+
+    const [errors, setErrors] = useState('');
+
     const handleRegister = async (e) => {
         e.preventDefault();
-        const user = await register({ email, password });
-        hookLogin(user);
+        try {
+            await register({ email, password });
+            navigate('/checkEmail');
+        } catch (e) {
+            if (e.errors) {
+                const errorMessages = Object.values(e.errors).flat();
+                setErrors(errorMessages);
+            } else {
+                setErrors([e.title || 'Registration failed']);
+            }
+        }
     };
     return (
         <div>
@@ -36,6 +48,8 @@ export const RegisterPage = () => {
                 <br />
                 <Link to="/login">Login</Link>
             </form>
+
+            {errors && <p>{errors}</p>}
         </div>
     );
 };

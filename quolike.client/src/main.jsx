@@ -1,5 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import {
+    createBrowserRouter,
+    BrowserRouter,
+    createRoutesFromElements,
+    Outlet,
+    Routes,
+    Route,
+    RouterProvider
+} from "react-router-dom";
 import './index.css';
 import ErrorPage from "./routes/Error";
 import Root, {
@@ -15,16 +24,9 @@ import ProfilePage from './routes/Profile';
 import { LoginPage } from './routes/Login';
 import { RegisterPage } from './routes/Register';
 import { AuthLayout } from './routes/AuthLayout';
-import {
-    createBrowserRouter,
-    BrowserRouter,
-    createRoutesFromElements,
-    Outlet,
-    Routes,
-    Route,
-    RouterProvider
-} from "react-router-dom";
 import { ProtectedLayout } from "./routes/ProtectedLayout";
+import { CheckEmailPage } from "./routes/CheckEmail"
+
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -48,6 +50,7 @@ const router = createBrowserRouter(
             </Route>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/checkEmail" element={<CheckEmailPage/> }/>
         </Route>
     )
 );

@@ -1,10 +1,12 @@
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuoLike.Server.Controllers;
 using QuoLike.Server.Data;
 using QuoLike.Server.Data.Repositories;
+using QuoLike.Server.Services;
 
 namespace QuoLike.Server
 {
@@ -22,6 +24,15 @@ namespace QuoLike.Server
 
             builder.Services.AddIdentityApiEndpoints<IdentityUser>() // Identity API 1/2
                 .AddEntityFrameworkStores<QuoLikeDbContext>();
+
+            // Email
+            //builder.Services.Configure<IdentityOptions>(options =>
+            //{
+            //    options.SignIn.RequireConfirmedEmail = true; // turn on email for Identity API
+            //});
+
+            //builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration); // email sender
+            //builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             // Cors policy 1/2
             builder.Services.AddCors(options =>

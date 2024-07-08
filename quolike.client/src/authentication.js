@@ -32,9 +32,9 @@ export async function register(user) {
             body: JSON.stringify(user),
         });
         if (!response.ok) {
-            throw new Error(`Failed to register: ${response.status} ${response.statusText}`);
+            throw await response.json(); // to get specific errors
         }
-        return login(user);
+        return;
     } catch (error) {
         console.error('Error registering:', error);
         throw error;
