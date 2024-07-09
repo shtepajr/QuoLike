@@ -2,7 +2,6 @@ export const origin = 'https://localhost:7282';
 
 export async function login(user) {
     try {
-        console.log(user);
         const response = await fetch(`${origin}/login`, {
             method: 'POST',
             headers: {
@@ -23,7 +22,6 @@ export async function login(user) {
 
 export async function register(user) {
     try {
-        console.log(JSON.stringify(user));
         const response = await fetch(`${origin}/register`, {
             method: 'POST',
             headers: {

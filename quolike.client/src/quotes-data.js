@@ -3,8 +3,19 @@
 export const origin = 'https://localhost:7282';
 
 export async function fetchQuotableMerged(page, limit) {
+    const user = localStorage.getItem('user');
+    if (!user) {
+        throw new Error('User not found');
+    }
+    const { accessToken } = JSON.parse(user);
     try {
-        const response = await fetch(`${origin}/api/quotes/merged?page=${page}&limit=${limit}`);
+        const response = await fetch(`${origin}/api/quotes/merged?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
         if (!response.ok) {
             throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
         }
@@ -17,8 +28,19 @@ export async function fetchQuotableMerged(page, limit) {
 }
 
 export async function fetchFavoritesMerged(page, limit) {
+    const user = localStorage.getItem('user');
+    if (!user) {
+        throw new Error('User not found');
+    }
+    const { accessToken } = JSON.parse(user);
     try {
-        const response = await fetch(`${origin}/api/quotes/all?page=${page}&limit=${limit}&isFavorite=true`);
+        const response = await fetch(`${origin}/api/quotes/all?page=${page}&limit=${limit}&isFavorite=true`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
         if (!response.ok) {
             throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
         }
@@ -31,22 +53,19 @@ export async function fetchFavoritesMerged(page, limit) {
 }
 
 export async function fetchArchivedMerged(page, limit) {
-    try {
-        const response = await fetch(`${origin}/api/quotes/all?page=${page}&limit=${limit}&isArchived=true`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching quotes:', error);
-        throw error;
+    const user = localStorage.getItem('user');
+    if (!user) {
+        throw new Error('User not found');
     }
-}
-
-export async function fetchArchived() {
+    const { accessToken } = JSON.parse(user);
     try {
-        const response = await fetch(`${origin}/api/quotes?isArchived=true`);
+        const response = await fetch(`${origin}/api/quotes/all?page=${page}&limit=${limit}&isArchived=true`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
         if (!response.ok) {
             throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
         }
@@ -59,12 +78,17 @@ export async function fetchArchived() {
 }
 
 export async function toggleEntry(quote) {
+    const user = localStorage.getItem('user');
+    if (!user) {
+        throw new Error('User not found');
+    }
+    const { accessToken } = JSON.parse(user);
     try {
-        console.log(quote);
         const response = await fetch(`${origin}/api/quotes/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                authorization: `Bearer ${accessToken}`,
             },
             body: JSON.stringify(quote),
         });

@@ -12,7 +12,8 @@ export const LoginPage = () => {
         hookLogin(user);
     };
     return (
-        <div>
+        <>
+            <h1>Login</h1>
             <form onSubmit={handleLogin}>
                 <div>
                     <label htmlFor="email">Email:</label>
@@ -35,7 +36,9 @@ export const LoginPage = () => {
                 <button type="submit">Login</button>
                 <br />
                 <Link to="/register">Register</Link>
+                <br />
+                <Link to="/forgotPassword">Forgot Password</Link>
             </form>
-        </div>
+        </>
     );
 };

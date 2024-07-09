@@ -24,7 +24,8 @@ export const RegisterPage = () => {
         }
     };
     return (
-        <div>
+        <>
+            <h1>Register</h1>
             <form onSubmit={handleRegister}>
                 <div>
                     <label htmlFor="email">Email:</label>
@@ -50,6 +51,6 @@ export const RegisterPage = () => {
             </form>
 
             {errors && <p>{errors}</p>}
-        </div>
+        </>
     );
 };

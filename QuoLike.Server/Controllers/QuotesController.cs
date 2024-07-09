@@ -18,6 +18,7 @@ namespace QuoLike.Server.Controllers
 {
     [Route("api/quotes")]
     [ApiController]
+    [Authorize]
     public class QuotesController : ControllerBase
     {
         private readonly ILogger<QuotesController> _logger;

@@ -26,6 +26,7 @@ import { RegisterPage } from './routes/Register';
 import { AuthLayout } from './routes/AuthLayout';
 import { ProtectedLayout } from "./routes/ProtectedLayout";
 import { CheckEmailPage } from "./routes/CheckEmail"
+import { ForgotPasswordPage } from "./routes/ForgotPassword"
 
 
 const router = createBrowserRouter(
@@ -50,7 +51,8 @@ const router = createBrowserRouter(
             </Route>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/checkEmail" element={<CheckEmailPage/> }/>
+            <Route path="/checkEmail" element={<CheckEmailPage />} />
+            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
         </Route>
     )
 );
