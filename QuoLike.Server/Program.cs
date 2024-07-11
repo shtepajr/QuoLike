@@ -26,13 +26,13 @@ namespace QuoLike.Server
                 .AddEntityFrameworkStores<QuoLikeDbContext>();
 
             // Email
-            //builder.Services.Configure<IdentityOptions>(options =>
-            //{
-            //    options.SignIn.RequireConfirmedEmail = true; // turn on email for Identity API
-            //});
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = true; // turn on email for Identity API
+            });
 
-            //builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration); // email sender
-            //builder.Services.AddTransient<IEmailSender, EmailSender>();
+            builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration); // email sender
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             // Cors policy 1/2
             builder.Services.AddCors(options =>
@@ -82,6 +82,23 @@ namespace QuoLike.Server
             })
             .WithOpenApi()
             .RequireAuthorization();
+            app.MapPost("/forgotPasswordCustom", async (IEmailSender emailSender, UserManager<IdentityUser> userManager, [FromBody] string email) =>
+            {
+                var user = await userManager.FindByEmailAsync(email);
+
+                if (user == null)
+                    return Results.NotFound();
+
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                if (token == null)
+                    return Results.NotFound();
+
+                var resetLink = $"https://localhost:5173/resetPassword?resetCode={token}&email={email}";             
+                await emailSender.SendEmailAsync(email, "Reset Password", $"Click here to reset your password: {resetLink}");
+
+                return Results.Ok();
+            })
+            .WithOpenApi();
 
             app.MapControllers();
 

@@ -1,19 +1,25 @@
 import { Link } from "react-router-dom";
-export function ForgotPasswordPage() {
+import { forgotPassword } from "../authentication";
 
-    const sendEmail = (e) => {
+
+
+export function ForgotPasswordPage() {
+    const sendEmailSubmit = async (e) => {
         e.preventDefault();
 
         // TODO: Handle form submission
-        console.log('Email sent!');
+        const email = e.target.email.value;
+        await forgotPassword(email);
+        console.log('Email sent to ' + email + '!');
+        alert('Email sent!');
     }
 
     return (
         <>
             <h1>Forgot Password</h1>
             <p>Enter your email address and we will send you a link to reset your password.</p>
-            <form onSubmit={sendEmail}>
-                <input type="email" placeholder="Email" />
+            <form onSubmit={sendEmailSubmit}>
+                <input name="email" type="email" placeholder="Email" />
                 <input type="submit" value="Submit" />
             </form>
 
