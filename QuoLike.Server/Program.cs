@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -102,6 +103,31 @@ namespace QuoLike.Server
                 return Results.Ok();
             })
             .WithOpenApi();
+            app.MapPost("/manage/delete", [Authorize] async (HttpContext context, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager) =>
+            {
+                var user = await userManager.GetUserAsync(context.User);
+                if (user == null)
+                {
+                    context.Response.StatusCode = 404; // Not Found
+                    await context.Response.WriteAsync("User not found");
+                    return;
+                }
+
+                var deleteResult = await userManager.DeleteAsync(user);
+                if (deleteResult.Succeeded)
+                {
+                    context.Response.StatusCode = 200; // OK
+                    await signInManager.SignOutAsync();
+                    await context.Response.WriteAsync("Account deleted successfully");
+                }
+                else
+                {
+                    context.Response.StatusCode = 500; // Internal Server Error
+                    await context.Response.WriteAsync("Failed to delete account");
+                }
+            })
+                .WithOpenApi()
+                .RequireAuthorization();
 
             app.MapControllers();
 

@@ -15,7 +15,9 @@ export const RegisterPage = () => {
             await register({ email, password });
             navigate('/checkEmail');
         } catch (e) {
-            if (e.errors) {
+            if (e.detail) {
+                setErrors(e.detail);
+            } else if (e.errors) {
                 const errorMessages = Object.values(e.errors).flat();
                 setErrors(errorMessages);
             } else {

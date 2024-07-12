@@ -6,11 +6,26 @@ export const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const hookLogin = useAuth().login;
+
+    const [errors, setErrors] = useState('');
+
     const handleLogin = async (e) => {
         e.preventDefault();
-        const user = await login({ email, password });
-        hookLogin(user);
+        try {
+            const user = await login({ email, password });
+            hookLogin(user)
+        } catch (e) {
+            if (e.detail) {
+                setErrors(e.detail);
+            } else if (e.errors) {
+                const errorMessages = Object.values(e.errors).flat();
+                setErrors(errorMessages);
+            } else {
+                setErrors([e.title || 'Login failed']);
+            }
+        }
     };
+
     return (
         <>
             <h1>Login</h1>
@@ -39,6 +54,8 @@ export const LoginPage = () => {
                 <br />
                 <Link to="/forgotPassword">Forgot Password</Link>
             </form>
+
+            {errors && <p>{errors}</p>}
         </>
     );
 };

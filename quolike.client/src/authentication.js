@@ -15,7 +15,7 @@ export async function login({ email, password }) {
             body: JSON.stringify(user),
         });
         if (!response.ok) {
-            throw new Error(`Failed to login: ${response.status} ${response.statusText}`);
+            throw await response.json(); // to get specific errors
         }
         const data = await response.json();
         return data;
@@ -91,6 +91,84 @@ export async function resetPassword({ resetCode, email, newPassword }) {
         return;
     } catch (error) {
         console.error('Error resetting password:', error);
+        throw error;
+    }
+}
+
+export async function manageInfo({ newEmail, newPassword, oldPassword }) {
+    const user = localStorage.getItem('user');
+    if (!user) {
+        throw new Error('User not found');
+    }
+    const { accessToken } = JSON.parse(user);
+    if (!newEmail || !newPassword || !oldPassword) {
+        throw new Error('New email, new password, and old password are required');
+    }
+    const userData = { newEmail, newPassword, oldPassword };
+    try {
+        const response = await fetch(`${origin}/manage/info`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify(userData),
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to manage info: ${response.status} ${response.statusText}`);
+        }
+        return;
+    } catch (error) {
+        console.error('Error managing info:', error);
+        throw error;
+    }
+}
+
+export async function getUserInfo() {
+    const user = localStorage.getItem('user');
+    if (!user) {
+        throw new Error('User not found');
+    }
+    const { accessToken } = JSON.parse(user);
+    try {
+        const response = await fetch(`${origin}/manage/info`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to get user info: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error getting user info:', error);
+        throw error;
+    }
+}
+
+export async function manageDelete() {
+    const user = localStorage.getItem('user');
+    if (!user) {
+        throw new Error('User not found');
+    }
+    const { accessToken } = JSON.parse(user);
+    try {
+        const response = await fetch(`${origin}/manage/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${accessToken}`,
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to delete account: ${response.status} ${response.statusText}`);
+        }
+        return;
+    } catch (error) {
+        console.error('Error deleting account:', error);
         throw error;
     }
 }

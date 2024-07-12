@@ -20,7 +20,7 @@ import Root, {
 import Tabs from './routes/Tabs';
 import Tab from './routes/Tab';
 import HomePage from './routes/Home';
-import ProfilePage from './routes/Profile';
+import ProfilePage, { profileLoader } from './routes/Profile';
 import { LoginPage } from './routes/Login';
 import { RegisterPage } from './routes/Register';
 import { AuthLayout } from './routes/AuthLayout';
@@ -32,7 +32,7 @@ import { ResetPasswordSuccess } from "./routes/ResetPasswordSuccess";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
-        <Route element={<AuthLayout />}>
+        <Route element={<AuthLayout />} errorElement={<ErrorPage />}>
             <Route element={<ProtectedLayout />}>
                 <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
                     <Route index element={<HomePage />} />
@@ -47,7 +47,7 @@ const router = createBrowserRouter(
                             <Route path="toggle" action={toggleAction}></Route>
                         </Route>
                     </Route>
-                    <Route path="profile" element={<ProfilePage />} />
+                    <Route path="profile" element={<ProfilePage />} loader={profileLoader} />
                 </Route>
             </Route>
             <Route path="/login" element={<LoginPage />} />
