@@ -88,7 +88,7 @@ export async function resetPassword({ resetCode, email, newPassword }) {
             throw new Error(`Failed to reset password: ${response.status} ${response.statusText}`);
         }
         console.log('successfully reset password');
-        return await response.json();
+        return;
     } catch (error) {
         console.error('Error resetting password:', error);
         throw error;

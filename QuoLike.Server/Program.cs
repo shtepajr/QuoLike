@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using QuoLike.Server.Controllers;
 using QuoLike.Server.Data;
 using QuoLike.Server.Data.Repositories;
 using QuoLike.Server.Services;
+using System.Text;
 
 namespace QuoLike.Server
 {
@@ -90,10 +92,11 @@ namespace QuoLike.Server
                     return Results.NotFound();
 
                 var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
                 if (token == null)
                     return Results.NotFound();
 
-                var resetLink = $"https://localhost:5173/resetPassword?resetCode={token}&email={email}";             
+                var resetLink = $"https://localhost:5173/resetPassword?resetCode={encodedToken}&email={email}";             
                 await emailSender.SendEmailAsync(email, "Reset Password", $"Click here to reset your password: {resetLink}");
 
                 return Results.Ok();

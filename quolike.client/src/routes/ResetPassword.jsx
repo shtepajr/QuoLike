@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { resetPassword } from "../authentication";
 
@@ -11,22 +11,9 @@ export function resetPasswordLoader({ request }) {
     return { email, resetCode };
 }
 
-//import { encode as base64UrlEncode } from 'base64-url';
-
-//function base64UrlEncode(str) {
-//    return btoa(str)
-//        .replace(/\+/g, '-')
-//        .replace(/\//g, '_')
-//        .replace(/=+$/, '');
-//}
-
-//const [password, setPassword] = useState('');
-//onChange = {(e) => setPassword(e.target.value)}
-//const encodedResetCode = base64UrlEncode(resetCode);
-//const user = { resetCode: encodedResetCode, email, newPassword };
-
 export const ResetPasswordPage = () => {
     const { email, resetCode } = useLoaderData();
+    const navigate = useNavigate();
 
     const resetPasswordSubmit = async (e) => {
         e.preventDefault();
@@ -43,9 +30,8 @@ export const ResetPasswordPage = () => {
             return;
         }
 
-        let message = await resetPassword(user);
-
-        alert(message);
+        await resetPassword(user);
+        navigate("/resetPasswordSuccess");
     }
 
     return (

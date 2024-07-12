@@ -28,6 +28,7 @@ import { ProtectedLayout } from "./routes/ProtectedLayout";
 import { CheckEmailPage } from "./routes/CheckEmail";
 import { ForgotPasswordPage } from "./routes/ForgotPassword";
 import { ResetPasswordPage, resetPasswordLoader } from "./routes/ResetPassword";
+import { ResetPasswordSuccess } from "./routes/ResetPasswordSuccess";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -54,6 +55,7 @@ const router = createBrowserRouter(
             <Route path="/checkEmail" element={<CheckEmailPage />} />
             <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
             <Route path="/resetPassword/:email?/:resetCode?" element={<ResetPasswordPage />} loader={resetPasswordLoader} />
+            <Route path="/resetPasswordSuccess" element={<ResetPasswordSuccess />}/>
         </Route>
     )
 );
