@@ -12,7 +12,8 @@ export default function ProfilePage() {
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
     const { logout } = useAuth();
-
+    const [errors, setErrors] = useState(null);
+    const [message, setMessage] = useState(null);
 
     const [passwordFormData, setPasswordFormData] = useState({
         oldPassword: '',
@@ -31,26 +32,48 @@ export default function ProfilePage() {
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
         if (passwordFormData.newPassword !== passwordFormData.confirmPassword) {
-            alert('New password and confirmation do not match.');
-            return;
+            setErrors("Passwords do not match");
+        } else {
+            try {
+                await manageInfo({ newEmail: user.email, oldPassword: passwordFormData.oldPassword, newPassword: passwordFormData.newPassword });
+                setIsEditingPassword(false);
+                setMessage('Password changed successfully');
+            } catch (e) {
+                if (e.detail) {
+                    setErrors(e.detail);
+                } else if (e.errors) {
+                    const errorMessages = Object.values(e.errors).flat();
+                    setErrors(errorMessages);
+                } else {
+                    setErrors([e.title || 'Reset password failed']);
+                }
+            }
         }
-
-        await manageInfo({ newEmail: user.email, oldPassword: passwordFormData.oldPassword, newPassword: passwordFormData.newPassword });
-        setIsEditingPassword(false);
     };
 
     const handleDeleteClick = () => {
         setShowModal(true);
     };
 
-    const handleConfirm = async() => {
-        await manageDelete();
-        await logout();
-        navigate('/');
-        setShowModal(false);
+    const handleDeleteConfirm = async () => {
+        try {
+            await manageDelete();
+            await logout();
+            setShowModal(false);
+            navigate('/');
+        } catch (e) {
+            if (e.detail) {
+                setErrors(e.detail);
+            } else if (e.errors) {
+                const errorMessages = Object.values(e.errors).flat();
+                setErrors(errorMessages);
+            } else {
+                setErrors([e.title || 'Reset password failed']);
+            }
+        } 
     };
 
-    const handleCancel = () => {
+    const handleDeleteCancel = () => {
         setShowModal(false);
     };
 
@@ -80,9 +103,13 @@ export default function ProfilePage() {
                                 </label>
                                 <input type="submit" value="Save" />
                                 <input type="button" value="Cancel" onClick={() => setIsEditingPassword(false)} />
+                                {errors && <p>{errors}</p>}
                             </>
                         ) : (
-                            <input type="button" value="Change password" onClick={() => setIsEditingPassword(true)} />
+                            <>
+                                <input type="button" value="Change password" onClick={() => setIsEditingPassword(true)} />
+                                {message && <p>{message}</p>}
+                            </>
                         )}
                     </form>
                 </div>
@@ -91,8 +118,8 @@ export default function ProfilePage() {
                     <ConfirmModal
                         show={showModal}
                         message="Are you sure you want to delete this item?"
-                        onConfirm={handleConfirm}
-                        onCancel={handleCancel}
+                        onConfirm={handleDeleteConfirm}
+                        onCancel={handleDeleteCancel}
                     />
                 </div>
             </div>

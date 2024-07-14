@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -85,9 +86,9 @@ namespace QuoLike.Server
             })
             .WithOpenApi()
             .RequireAuthorization();
-            app.MapPost("/forgotPasswordCustom", async (IEmailSender emailSender, UserManager<IdentityUser> userManager, [FromBody] string email) =>
+            app.MapPost("/forgotPasswordCustom", async (IEmailSender emailSender, UserManager<IdentityUser> userManager, ForgotPasswordRequest forgotPassword) =>
             {
-                var user = await userManager.FindByEmailAsync(email);
+                var user = await userManager.FindByEmailAsync(forgotPassword.Email);
 
                 if (user == null)
                     return Results.NotFound();
@@ -97,8 +98,8 @@ namespace QuoLike.Server
                 if (token == null)
                     return Results.NotFound();
 
-                var resetLink = $"https://localhost:5173/resetPassword?resetCode={encodedToken}&email={email}";             
-                await emailSender.SendEmailAsync(email, "Reset Password", $"Click here to reset your password: {resetLink}");
+                var resetLink = $"https://localhost:5173/resetPassword?resetCode={encodedToken}&email={forgotPassword.Email}";             
+                await emailSender.SendEmailAsync(forgotPassword.Email, "Reset Password", $"Please reset your password by clicking <a href=\"{resetLink}\">here</a>");
 
                 return Results.Ok();
             })

@@ -18,22 +18,29 @@ export const ResetPasswordPage = () => {
     const navigate = useNavigate();
     const [errors, setErrors] = useState(null);
 
+    const [formData, setFormData] = useState({
+        resetCode: resetCode,
+        email: email,
+        newPassword: '',
+        confirmPassword: '',
+    });
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
     const resetPasswordSubmit = async (e) => {
         e.preventDefault();
-
-        const email = e.target.email.value;
-        const newPassword = e.target.newPassword.value;
-        const confirmPassword = e.target.confirmPassword.value;
-        const resetCode = e.target.resetCode.value;
-
-        const user = { resetCode, email, newPassword };
-
-        if (newPassword !== confirmPassword) {
+        if (formData.newPassword !== formData.confirmPassword) {
             setErrors("Passwords do not match");
         }
         else {
             try {
-                await resetPassword(user);
+                await resetPassword(formData);
                 navigate("/resetPasswordSuccess");
             } catch (e) {
                 if (e.detail) {
@@ -49,7 +56,6 @@ export const ResetPasswordPage = () => {
     }
 
     return (
-
         <div>
             <h1>Reset Password</h1>
             <p>Enter your new password.</p>
@@ -58,11 +64,11 @@ export const ResetPasswordPage = () => {
                 <input hidden name="resetCode" type="text" defaultValue={resetCode} />
                 <label>
                     New Password
-                    <input name="newPassword" type="password" required/>
+                    <input required name="newPassword" type="password" onChange={handleInputChange} value={formData.newPassword} />
                 </label>
                 <label>
                     Confirm Password
-                    <input name="confirmPassword" type="password" required/>
+                    <input required name="confirmPassword" type="password" onChange={handleInputChange} value={formData.confirmPassword} />
                 </label>
                 <input type="submit" value="Submit" />
             </form>
