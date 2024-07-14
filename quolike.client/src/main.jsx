@@ -30,34 +30,37 @@ import { ForgotPasswordPage } from "./routes/ForgotPassword";
 import { ResetPasswordPage, resetPasswordLoader } from "./routes/ResetPassword";
 import { ResetPasswordSuccessPage } from "./routes/ResetPasswordSuccess";
 import { ResendConfirmationEmailPage } from "./routes/ResendConfirmationEmail";
+import { ThemeLayout } from "./routes/ThemeLayout";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
-        <Route element={<AuthLayout />} errorElement={<ErrorPage />}>
-            <Route element={<ProtectedLayout />}>
-                <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
-                    <Route index element={<HomePage />} />
-                    <Route element={<Tabs />}>
-                        <Route path="all/:page?" element={<Tab />} loader={allLoader}>
-                            <Route path="toggle" action={toggleAction}></Route>
+        <Route element={<ThemeLayout />}>
+            <Route element={<AuthLayout />} errorElement={<ErrorPage />}>
+                <Route element={<ProtectedLayout />}>
+                    <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
+                        <Route index element={<HomePage />} />
+                        <Route element={<Tabs />}>
+                            <Route path="all/:page?" element={<Tab />} loader={allLoader}>
+                                <Route path="toggle" action={toggleAction}></Route>
+                            </Route>
+                            <Route path="favorites/:page?" element={<Tab />} loader={favoritesLoader}>
+                                <Route path="toggle" action={toggleAction}></Route>
+                            </Route>
+                            <Route path="archived/:page?" element={<Tab />} loader={archivedLoader}>
+                                <Route path="toggle" action={toggleAction}></Route>
+                            </Route>
                         </Route>
-                        <Route path="favorites/:page?" element={<Tab />} loader={favoritesLoader}>
-                            <Route path="toggle" action={toggleAction}></Route>
-                        </Route>
-                        <Route path="archived/:page?" element={<Tab />} loader={archivedLoader}>
-                            <Route path="toggle" action={toggleAction}></Route>
-                        </Route>
+                        <Route path="profile" element={<ProfilePage />} loader={profileLoader} />
                     </Route>
-                    <Route path="profile" element={<ProfilePage />} loader={profileLoader} />
                 </Route>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/checkEmail" element={<CheckEmailPage />} />
+                <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
+                <Route path="/resetPassword/:email?/:resetCode?" element={<ResetPasswordPage />} loader={resetPasswordLoader} />
+                <Route path="/resetPasswordSuccess" element={<ResetPasswordSuccessPage />} />
+                <Route path="/resendConfirmationEmail" element={<ResendConfirmationEmailPage />} />
             </Route>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/checkEmail" element={<CheckEmailPage />} />
-            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
-            <Route path="/resetPassword/:email?/:resetCode?" element={<ResetPasswordPage />} loader={resetPasswordLoader} />
-            <Route path="/resetPasswordSuccess" element={<ResetPasswordSuccessPage />} />
-            <Route path="/resendConfirmationEmail" element={ <ResendConfirmationEmailPage />} />
         </Route>
     )
 );

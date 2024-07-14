@@ -1,6 +1,4 @@
-﻿import {
-    useFetcher
-} from "react-router-dom";
+﻿import { useFetcher } from "react-router-dom";
 
 export default function Quote(quote) {
     const fetcher = useFetcher();

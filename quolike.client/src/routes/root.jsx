@@ -8,6 +8,8 @@ import {
     toggleEntry
 } from '../quotes-data.js'
 import { useAuth } from '../hooks/useAuth';
+import { useTheme } from '../hooks/useTheme';
+
 
 export const limit = 6;
 
@@ -57,6 +59,8 @@ export async function toggleAction({ request, params }) {
 
 export default function Root() {
     const { logout } = useAuth();
+    const { theme, toggleTheme } = useTheme();
+
 
     const handleLogout = () => {
         logout();
@@ -66,7 +70,9 @@ export default function Root() {
         <>
             <header className="header">
                 <NavLink to="/">QuoLike</NavLink>
-                <button>Dark mode</button>
+                <button onClick={toggleTheme}>
+                    Switch to {theme === 'light' ? 'Dark' : 'Light'} Theme
+                </button>
                 <NavLink to="profile">Profile</NavLink>
                 <button onClick={handleLogout}>Logout</button>
             </header>
