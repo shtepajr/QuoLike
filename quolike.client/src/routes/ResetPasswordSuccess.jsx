@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-export const ResetPasswordSuccess = () => {
+export const ResetPasswordSuccessPage = () => {
     return (
         <div>
             <h1>Reset Password Success</h1>

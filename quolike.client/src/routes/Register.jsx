@@ -49,9 +49,11 @@ export const RegisterPage = () => {
                 </div>
                 <button type="submit">Register</button>
                 <br />
-                <Link to="/login">Login</Link>
+                
             </form>
-
+            <Link to="/login">Login</Link>
+            <br />
+            <Link to="/resendConfirmationEmail">Resend Confirmation Email</Link>
             {errors && <p>{errors}</p>}
         </>
     );

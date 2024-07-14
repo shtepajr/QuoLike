@@ -49,12 +49,10 @@ export const LoginPage = () => {
                     />
                 </div>
                 <button type="submit">Login</button>
-                <br />
-                <Link to="/register">Register</Link>
-                <br />
-                <Link to="/forgotPassword">Forgot Password</Link>
             </form>
-
+            <Link to="/register">Register</Link><br />
+            <Link to="/forgotPassword">Forgot Password</Link><br />
+            <Link to="/resendConfirmationEmail">Resend Confirmation Email</Link>
             {errors && <p>{errors}</p>}
         </>
     );

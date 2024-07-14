@@ -173,6 +173,29 @@ export async function manageDelete() {
     }
 }
 
+export async function resendConfirmationEmail(email) {
+    if (!email) {
+        throw new Error('Email is required');
+    }
+    try {
+        const response = await fetch(`${origin}/resendConfirmationEmail`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(email),
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to resend confirmation email: ${response.status} ${response.statusText}`);
+        }
+        return;
+    } catch (error) {
+        console.error('Error resending confirmation email:', error);
+        throw error;
+    }
+
+}
+
 //export async function logout() {
 //    try {
 //        const response = await fetch(`${origin}/logout`, {
