@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ using QuoLike.Server.Mappers;
 using QuoLike.Server.Models;
 using QuoLike.Server.Models.Quotable;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.Json;
 
 namespace QuoLike.Server.Controllers
@@ -24,11 +26,14 @@ namespace QuoLike.Server.Controllers
         private readonly ILogger<QuotesController> _logger;
         private readonly IQuoteRepository _quoteRepository;
         private readonly HttpClient _httpClient;
-        public QuotesController(ILogger<QuotesController> logger, IQuoteRepository quoteSelectRepository, HttpClient httpClient)
+        private readonly UserManager<IdentityUser> _userManager;
+        public QuotesController(ILogger<QuotesController> logger, IQuoteRepository quoteSelectRepository, 
+            HttpClient httpClient, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _quoteRepository = quoteSelectRepository;
             _httpClient = httpClient;
+            _userManager = userManager;
         }
 
         [HttpGet("merged")]
@@ -89,7 +94,6 @@ namespace QuoLike.Server.Controllers
 
         }
 
-
         [HttpGet("all")]
         public async Task<IActionResult> GetAll([FromQuery] QueryObject queryObject)
         {
@@ -135,8 +139,10 @@ namespace QuoLike.Server.Controllers
 
                 return await Update(updateDTO);
             }
-
-            existingQuote = await _quoteRepository.AddAsync(quote.ToQuote());
+            var user = await _userManager.GetUserAsync(User);
+            var toAdd = quote.ToQuote();
+            toAdd.UserId = user.Id;
+            existingQuote = await _quoteRepository.AddAsync(toAdd);
             return CreatedAtAction(nameof(Get), new { id = existingQuote.QuoteId }, existingQuote.ToQuoteDTO());
         }
 

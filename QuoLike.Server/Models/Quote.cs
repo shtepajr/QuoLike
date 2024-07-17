@@ -5,6 +5,7 @@ namespace QuoLike.Server.Models
     public class Quote : QuotableQuote
     {
         public string QuoteId { get; set; }
+        public string UserId { get; set; }
         public bool? IsFavorite { get; set; }
         public bool? IsArchived { get; set; }
     }
