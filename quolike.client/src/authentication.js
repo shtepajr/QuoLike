@@ -53,7 +53,7 @@ export async function forgotPassword(email) {
         throw new Error('Email is required');
     }
     try {
-        const response = await fetch(`${origin}/forgotPasswordCustom`, {
+        const response = await fetch(`${origin}/api/auth/forgotPasswordCustom`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -156,7 +156,7 @@ export async function manageDelete() {
     }
     const { accessToken } = JSON.parse(user);
     try {
-        const response = await fetch(`${origin}/manage/delete`, {
+        const response = await fetch(`${origin}/api/auth/manage/delete`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -22,6 +22,7 @@ namespace QuoLike.Server
 
             // Add services to the container.
             builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
+            builder.Services.AddScoped<IAuthRepository, AuthRepository>();
             builder.Services.AddDbContext<QuoLikeDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("QuoLikeDbContext")));
             builder.Services.AddHttpClient();
@@ -74,62 +75,7 @@ namespace QuoLike.Server
             app.UseAuthorization();
 
             app.MapIdentityApi<IdentityUser>(); // Identity API 2/2
-            app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
-                [FromBody] object empty) =>
-            {
-                if (empty != null)
-                {
-                    await signInManager.SignOutAsync();
-                    return Results.Ok();
-                }
-                return Results.Unauthorized();
-            })
-            .WithOpenApi()
-            .RequireAuthorization();
-            app.MapPost("/forgotPasswordCustom", async (IEmailSender emailSender, UserManager<IdentityUser> userManager, ForgotPasswordRequest forgotPassword) =>
-            {
-                var user = await userManager.FindByEmailAsync(forgotPassword.Email);
-
-                if (user == null)
-                    return Results.NotFound();
-
-                var token = await userManager.GeneratePasswordResetTokenAsync(user);
-                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-                if (token == null)
-                    return Results.NotFound();
-
-                var resetLink = $"https://localhost:5173/resetPassword?resetCode={encodedToken}&email={forgotPassword.Email}";             
-                await emailSender.SendEmailAsync(forgotPassword.Email, "Reset Password", $"Please reset your password by clicking <a href=\"{resetLink}\">here</a>");
-
-                return Results.Ok();
-            })
-            .WithOpenApi();
-            app.MapPost("/manage/delete", [Authorize] async (HttpContext context, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager) =>
-            {
-                var user = await userManager.GetUserAsync(context.User);
-                if (user == null)
-                {
-                    context.Response.StatusCode = 404; // Not Found
-                    await context.Response.WriteAsync("User not found");
-                    return;
-                }
-
-                var deleteResult = await userManager.DeleteAsync(user);
-                if (deleteResult.Succeeded)
-                {
-                    context.Response.StatusCode = 200; // OK
-                    await signInManager.SignOutAsync();
-                    await context.Response.WriteAsync("Account deleted successfully");
-                }
-                else
-                {
-                    context.Response.StatusCode = 500; // Internal Server Error
-                    await context.Response.WriteAsync("Failed to delete account");
-                }
-            })
-                .WithOpenApi()
-                .RequireAuthorization();
-
+ 
             app.MapControllers();
 
             app.MapFallbackToFile("/index.html");
