@@ -12,7 +12,7 @@ export default function Quote(quote) {
     };
 
     return (
-        <div className="quote">
+        <div className="quote card shadow">
             <div className="quote--content">{quote.content}</div>
             <div className="quote--author">{quote.author}</div>
             {quote.tags && <div className="quote--tags">{quote.tags}</div>}

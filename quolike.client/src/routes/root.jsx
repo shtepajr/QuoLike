@@ -9,6 +9,7 @@ import {
 } from '../quotes-data.js'
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../hooks/useTheme';
+import logo from '../assets/quolike-high-resolution-logo-white-transparent.png';
 
 
 export const limit = 6;
@@ -68,13 +69,53 @@ export default function Root() {
 
     return (
         <>
-            <header className="header">
-                <NavLink to="/">QuoLike</NavLink>
-                <button onClick={toggleTheme}>
-                    Switch to {theme === 'light' ? 'Dark' : 'Light'} Theme
-                </button>
-                <NavLink to="profile">Profile</NavLink>
-                <button onClick={handleLogout}>Logout</button>
+            <header className="p-3 text-bg-dark">
+                <div className="container">
+                    <div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                        <NavLink to="/" className="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                            <img src={logo} alt="Logo" width="150" />
+                        </NavLink>
+                        <div className="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                        </div>
+                        <div className="d-flex flex-wrap justify-content-center">
+                            <button onClick={toggleTheme} className="d-flex align-items-center btn btn-outline-secondary me-2">
+                                {theme === 'light' ? (
+                                    <>
+                                        <span className="material-symbols-outlined">
+                                            toggle_off
+                                        </span>
+                                        Light
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="material-symbols-outlined">
+                                            toggle_on
+                                        </span>
+                                        Dark
+                                    </>
+                                )}
+                            </button>
+                            <div className="dropdown">
+                                <button className="d-flex align-items-center btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span className="material-symbols-outlined md-36">
+                                        account_circle
+                                    </span>
+                                    Profile
+                                </button>
+                                <ul className="dropdown-menu">
+                                    <li>
+                                        <NavLink to="profile" className="dropdown-item">
+                                            Profile
+                                        </NavLink>
+                                    </li>
+                                    <li>
+                                        <button onClick={handleLogout} className="dropdown-item">Logout</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </header>
             <main className="main">
                 <Outlet />

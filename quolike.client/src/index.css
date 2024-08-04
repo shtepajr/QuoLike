@@ -11,6 +11,43 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Google material */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+}
+.material-symbols-outlined {
+    user-select: none;
+}
+
+.material-symbols-outlined.md-18 {
+    font-size: 18px;
+}
+
+.material-symbols-outlined.md-20 {
+    font-size: 20px;
+}
+
+.material-symbols-outlined.md-24 {
+    /* default */
+    font-size: 24px;
+}
+
+.material-symbols-outlined.md-30 {
+    font-size: 30px;
+}
+
+.material-symbols-outlined.md-32 {
+    font-size: 32px;
+}
+
+.material-symbols-outlined.md-36 {
+    font-size: 36px;
+}
+
+.material-symbols-outlined.md-48 {
+    font-size: 48px;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -89,7 +126,7 @@ html, body {
     --text-color-dark: #ffffff;
 }
 
-body.light-theme {
+/*body.light-theme {
     --primary-color: var(--primary-color-light);
     --bg-color: var(--bg-color-light);
     --text-color: var(--text-color-light);
@@ -99,7 +136,7 @@ body.dark-theme {
     --primary-color: var(--primary-color-dark);
     --bg-color: var(--bg-color-dark);
     --text-color: var(--text-color-dark);
-}
+}*/
 
 body {
     background-color: var(--bg-color);
