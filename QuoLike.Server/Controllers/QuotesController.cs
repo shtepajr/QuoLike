@@ -48,10 +48,11 @@ namespace QuoLike.Server.Controllers
             List<Quote> dbQuotes = new();
 
             int dbPage = 1;
-            int totalDbPages = (int)Math.Ceiling(await _quoteRepository.GetTotalAsync() / (double)queryObject.Limit);
+            string? userId = _userManager.GetUserId(User);
+            int totalDbPages = (int)Math.Ceiling(await _quoteRepository.GetTotalAsync(userId) / (double)queryObject.Limit);
             do
             {
-                var quotes = await _quoteRepository.GetPaginatedAsync(new QueryObject() { Page = dbPage, Limit = 6 });
+                var quotes = await _quoteRepository.GetPaginatedAsync(new QueryObject() { Page = dbPage, Limit = 6 }, userId);
 
                 if (quotes.Count() == 0)
                 {
@@ -82,7 +83,6 @@ namespace QuoLike.Server.Controllers
                              isFavorite = subgroup is null ? false : subgroup.IsFavorite,
                              isArchived = subgroup is null ? false : subgroup.IsArchived,
                          };
-
             return Ok(new
             {
                 Page = queryObject.Page,
@@ -91,14 +91,16 @@ namespace QuoLike.Server.Controllers
                 TotalPages = (int)Math.Ceiling(quotableQuotes.TotalCount / (double)queryObject.Limit),
                 Results = merged
             });
-
         }
 
         [HttpGet("all")]
         public async Task<IActionResult> GetAll([FromQuery] QueryObject queryObject)
         {
-            var dbQuotes = await _quoteRepository.GetPaginatedAsync(queryObject);
-            int totalDbQuotes = await _quoteRepository.GetTotalAsync();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            string? userId = _userManager.GetUserId(User);
+            var dbQuotes = await _quoteRepository.GetPaginatedAsync(queryObject, userId);
+            int totalDbQuotes = await _quoteRepository.GetTotalAsync(userId);
             int totalDbPages = (int)Math.Ceiling(totalDbQuotes / (double)queryObject.Limit);
 
             return Ok(new
@@ -117,7 +119,9 @@ namespace QuoLike.Server.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var q = await _quoteRepository.GetAsync(id);
+            string? userId = _userManager.GetUserId(User);
+
+            var q = await _quoteRepository.GetAsync(id, userId);
 
             if (q is null)
                 return NotFound();
@@ -131,19 +135,22 @@ namespace QuoLike.Server.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var existingQuote = await _quoteRepository.GetByExternalIdAsync(quote._id);
-            if (existingQuote != null)
-            {
-                var updateDTO = quote.ToQuote().ToUpdateDTO();
-                updateDTO.QuoteId = existingQuote.QuoteId;
+            string? userId = _userManager.GetUserId(User);
 
-                return await Update(updateDTO);
+            var existingQuote = await _quoteRepository.GetByExternalIdAsync(quote._id, userId);
+            if (existingQuote == null)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var toAdd = quote.ToQuote();
+                toAdd.UserId = user.Id;
+                existingQuote = await _quoteRepository.AddAsync(toAdd);
+                return CreatedAtAction(nameof(Get), new { id = existingQuote.QuoteId }, existingQuote.ToQuoteDTO());
             }
-            var user = await _userManager.GetUserAsync(User);
-            var toAdd = quote.ToQuote();
-            toAdd.UserId = user.Id;
-            existingQuote = await _quoteRepository.AddAsync(toAdd);
-            return CreatedAtAction(nameof(Get), new { id = existingQuote.QuoteId }, existingQuote.ToQuoteDTO());
+
+            var updateDTO = quote.ToQuote().ToUpdateDTO();
+            updateDTO.QuoteId = existingQuote.QuoteId;
+
+            return await Update(updateDTO);
         }
 
         [HttpPut("edit/{id}")]
@@ -152,7 +159,9 @@ namespace QuoLike.Server.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var existingQuote = await _quoteRepository.GetByExternalIdAsync(quote._id);
+            string? userId = _userManager.GetUserId(User);
+
+            var existingQuote = await _quoteRepository.GetByExternalIdAsync(quote._id, userId);
             if (existingQuote == null)
             {
                 return NotFound("Quote not found");
@@ -184,7 +193,9 @@ namespace QuoLike.Server.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var q = await _quoteRepository.DeleteAsync(id);
+            string? userId = _userManager.GetUserId(User);
+
+            var q = await _quoteRepository.DeleteAsync(id, userId);
 
             if (q == null)
             {
