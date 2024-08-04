@@ -1,9 +1,11 @@
-﻿namespace QuoLike.Server.DTOs
+﻿using QuoLike.Server.Models;
+using QuoLike.Server.Models.Quotable;
+
+namespace QuoLike.Server.DTOs
 {
-    public class QuoteCreateDTO
+    public class QuoteCreateDTO : QuotableQuote
     {
-        public string ExternalId { get; set; }
-        public bool isFavorite { get; set; }
-        public bool isArchived { get; set; }
+        public bool? IsFavorite { get; set; }
+        public bool? IsArchived { get; set; }
     }
 }

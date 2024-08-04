@@ -1,36 +1,42 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using QuoLike.Server.Data;
 using QuoLike.Server.Data.Repositories;
 using QuoLike.Server.DTOs;
-using QuoLike.Server.DTOs.Quotable;
 using QuoLike.Server.Helpers;
 using QuoLike.Server.Mappers;
 using QuoLike.Server.Models;
+using QuoLike.Server.Models.Quotable;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.Json;
 
 namespace QuoLike.Server.Controllers
 {
     [Route("api/quotes")]
     [ApiController]
+    [Authorize]
     public class QuotesController : ControllerBase
     {
         private readonly ILogger<QuotesController> _logger;
         private readonly IQuoteRepository _quoteRepository;
         private readonly HttpClient _httpClient;
-        public QuotesController(ILogger<QuotesController> logger, IQuoteRepository quoteSelectRepository, HttpClient httpClient)
+        private readonly UserManager<IdentityUser> _userManager;
+        public QuotesController(ILogger<QuotesController> logger, IQuoteRepository quoteSelectRepository, 
+            HttpClient httpClient, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _quoteRepository = quoteSelectRepository;
             _httpClient = httpClient;
+            _userManager = userManager;
         }
 
-        [HttpGet]
-        [Route("merged")]
+        [HttpGet("merged")]
         public async Task<IActionResult> GetQuotableMerged([FromQuery] QueryObject queryObject)
         {
             string requestUrl = $"https://api.quotable.io/quotes?page={queryObject.Page}&limit={queryObject.Limit}";
@@ -41,9 +47,12 @@ namespace QuoLike.Server.Controllers
             // Find all quotes in database (by quotable page quotes)
             List<Quote> dbQuotes = new();
 
-            for (int i = 1; ; i++)
+            int dbPage = 1;
+            string? userId = _userManager.GetUserId(User);
+            int totalDbPages = (int)Math.Ceiling(await _quoteRepository.GetTotalAsync(userId) / (double)queryObject.Limit);
+            do
             {
-                var quotes = await _quoteRepository.GetPaginatedAsync(new QueryObject() { Page = i, Limit = 6 });
+                var quotes = await _quoteRepository.GetPaginatedAsync(new QueryObject() { Page = dbPage, Limit = 6 }, userId);
 
                 if (quotes.Count() == 0)
                 {
@@ -52,13 +61,14 @@ namespace QuoLike.Server.Controllers
                 else
                 {
                     dbQuotes.AddRange(quotes
-                        .Where(q => quotableQuotes.Results.Any(qtb => qtb._id == q.ExternalId)));
+                        .Where(q => quotableQuotes.Results.Any(qtb => qtb._id == q._id)));
                 }
-            }
+                dbPage++;
+            } while (dbPage <= totalDbPages);
 
             // Merge quotables with db quotes (left join)
             var merged = from qtb in quotableQuotes.Results
-                         join q in dbQuotes on qtb._id equals q.ExternalId into gj
+                         join q in dbQuotes on qtb._id equals q._id into gj
                          from subgroup in gj.DefaultIfEmpty()
                          select new
                          {
@@ -70,10 +80,9 @@ namespace QuoLike.Server.Controllers
                              qtb.Length,
                              qtb.DateAdded,
                              qtb.DateModified,
-                             isFavorite = subgroup is null ? false : subgroup.isFavorite,
-                             isArchived = subgroup is null ? false : subgroup.isFavorite,
+                             isFavorite = subgroup is null ? false : subgroup.IsFavorite,
+                             isArchived = subgroup is null ? false : subgroup.IsArchived,
                          };
-
             return Ok(new
             {
                 Page = queryObject.Page,
@@ -82,72 +91,25 @@ namespace QuoLike.Server.Controllers
                 TotalPages = (int)Math.Ceiling(quotableQuotes.TotalCount / (double)queryObject.Limit),
                 Results = merged
             });
-
         }
 
-        [HttpGet]
-        [Route("all")]
+        [HttpGet("all")]
         public async Task<IActionResult> GetAll([FromQuery] QueryObject queryObject)
         {
-            var dbQuotes = await _quoteRepository.GetPaginatedAsync(queryObject);
-            int totalDbQuotes = await _quoteRepository.GetTotalAsync();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            string? userId = _userManager.GetUserId(User);
+            var dbQuotes = await _quoteRepository.GetPaginatedAsync(queryObject, userId);
+            int totalDbQuotes = await _quoteRepository.GetTotalAsync(userId);
             int totalDbPages = (int)Math.Ceiling(totalDbQuotes / (double)queryObject.Limit);
-
-            List<QuotableQuote> quotables = new();
-            int matchesCounter = 0;
-;
-            // TODO: fix the infinite loop
-            for (int i = 0; i < totalDbPages; i++)
-            {
-                string requestUrl = $"https://api.quotable.io/quotes?page={i + 1}&limit={queryObject.Limit}";
-                var response = await _httpClient.GetAsync(requestUrl);
-                var data = await response.Content.ReadAsStringAsync();
-
-                var quotableQuotes = JsonConvert.DeserializeObject<QuotableQuoteConnection>(data);
-
-                if (quotableQuotes is null || quotableQuotes?.Count < 1)
-                {
-                    break;
-                }
-                else
-                {
-                    var matches = quotableQuotes.Results
-                        .Where(qtb => dbQuotes.Any(q => q.ExternalId == qtb._id));
-                    quotables.AddRange(matches);
-
-                    matchesCounter += matches.Count();
-
-                    if (matchesCounter == dbQuotes.Count())
-                    {
-                        break;
-                    }
-                }
-            }
-
-            // Merge db quotes with quotables (inner join)
-            var merged = from q in dbQuotes
-                         join qtb in quotables on q.ExternalId equals qtb._id
-                         select new
-                         {
-                             qtb.Tags,
-                             qtb._id,
-                             qtb.Content,
-                             qtb.Author,
-                             qtb.AuthorSlug,
-                             qtb.Length,
-                             qtb.DateAdded,
-                             qtb.DateModified,
-                             q.isFavorite,
-                             q.isArchived,
-                         };
 
             return Ok(new
             {
                 Page = queryObject.Page,
-                Count = merged.Count(),
+                Count = dbQuotes.Count(),
                 TotalCount = totalDbQuotes,
                 TotalPages = totalDbPages,
-                Results = merged
+                Results = dbQuotes
             });
         }
 
@@ -157,7 +119,9 @@ namespace QuoLike.Server.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var q = await _quoteRepository.GetAsync(id);
+            string? userId = _userManager.GetUserId(User);
+
+            var q = await _quoteRepository.GetAsync(id, userId);
 
             if (q is null)
                 return NotFound();
@@ -165,24 +129,55 @@ namespace QuoLike.Server.Controllers
             return Ok(q.ToQuoteDTO());
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] QuoteCreateDTO quote)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var q = await _quoteRepository.AddAsync(quote.ToQuote());
+            string? userId = _userManager.GetUserId(User);
 
-            return CreatedAtAction(nameof(Get), new { id = q.QuoteId }, q.ToQuoteDTO());
+            var existingQuote = await _quoteRepository.GetByExternalIdAsync(quote._id, userId);
+            if (existingQuote == null)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var toAdd = quote.ToQuote();
+                toAdd.UserId = user.Id;
+                existingQuote = await _quoteRepository.AddAsync(toAdd);
+                return CreatedAtAction(nameof(Get), new { id = existingQuote.QuoteId }, existingQuote.ToQuoteDTO());
+            }
+
+            var updateDTO = quote.ToQuote().ToUpdateDTO();
+            updateDTO.QuoteId = existingQuote.QuoteId;
+
+            return await Update(updateDTO);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] QuoteUpdateDTO quote)
+        [HttpPut("edit/{id}")]
+        public async Task<IActionResult> Update([FromBody] QuoteUpdateDTO quote)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var q = await _quoteRepository.UpdateAsync(quote.ToQuote());
+            string? userId = _userManager.GetUserId(User);
+
+            var existingQuote = await _quoteRepository.GetByExternalIdAsync(quote._id, userId);
+            if (existingQuote == null)
+            {
+                return NotFound("Quote not found");
+            }
+
+            // delete if not favorite and not archived
+            if (quote.IsFavorite == false && quote.IsArchived == false)
+            {
+                return await Delete(quote.QuoteId);
+            }
+
+            // update
+            existingQuote.IsFavorite = quote.IsFavorite;
+            existingQuote.IsArchived = quote.IsArchived;
+
+            var q = await _quoteRepository.UpdateAsync(existingQuote);
 
             if (q == null)
             {
@@ -192,13 +187,15 @@ namespace QuoLike.Server.Controllers
             return Ok(q.ToQuoteDTO());
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var q = await _quoteRepository.DeleteAsync(id);
+            string? userId = _userManager.GetUserId(User);
+
+            var q = await _quoteRepository.DeleteAsync(id, userId);
 
             if (q == null)
             {
@@ -207,23 +204,5 @@ namespace QuoLike.Server.Controllers
 
             return Ok(q.ToQuoteDTO());
         }
-
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll([FromQuery] QueryObject queryObject)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
-
-        //    var quotes = await _quoteRepository.GetAllAsync(queryObject);
-
-        //    var quoteDtos = quotes.Select(s => s.ToQuoteDTO());
-
-        //    return Ok(new
-        //    {
-        //        TotalCount = quotes.Count(),
-        //        TotalPages = (int)Math.Ceiling(quotes.Count() / (double)queryObject.Limit),
-        //        Results = quoteDtos
-        //    });
-        //}
     }
 }

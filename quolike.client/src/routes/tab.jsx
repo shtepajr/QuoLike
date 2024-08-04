@@ -1,42 +1,39 @@
 import React, { useEffect, useState } from 'react';
-import { useLoaderData, useNavigate, redirect } from 'react-router-dom';
-import Quote from './quote.jsx';
-import { limit } from './root.jsx';
-import Paginate from '../paginate.jsx'
-
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import Quote from '../components/Quote';
+import Paginate from '../components/Paginate'
 export default function Tab() {
     const quotesData = useLoaderData();
     const navigate = useNavigate();
 
     // pagination
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(quotesData.page || 1);
     const [totalPages, setTotalPages] = useState(1);
-    const qLimit = useState(limit && 6);
 
     useEffect(() => {
         setTotalPages(quotesData.totalPages);
+        setPage(quotesData.page || 1);
+        console.log('useEffect: quotesData changes with page', quotesData.page);
     }, [quotesData]);
 
-    useEffect(() => {
-        navigate(`?page=${page}`);
-        console.log('useEffect called by [page, limit, navigate] changes');
-    }, [page, navigate]);
-
     const handlePageClick = (data) => {
-        setPage(data.selected + 1);
-        console.log('handlePageClick called');
+        navigate(`?page=${data.selected + 1}`);
+        console.log(`handlePageClick called: navigates to the ${data.selected + 1} page`);
     };
 
     let quotes = quotesData?.results?.map(
         (quote) => {
             return (
                 <Quote
-                    id={quote._id}
                     key={quote._id}
-                    title={quote.title}
+                    _id={quote._id}
+                    tags={quote.tags}
                     content={quote.content}
                     author={quote.author}
-                    tags={quote.tags}
+                    authorSlug={quote.authorSlug}
+                    length={quote.length}
+                    dateAdded={quote.dateAdded}
+                    dateModified={quote.dateModified}
                     isFavorite={quote.isFavorite}
                     isArchived={quote.isArchived}
                 />
@@ -52,6 +49,7 @@ export default function Tab() {
             <Paginate
                 handlePageClick={handlePageClick}
                 totalPages={totalPages}
+                forcePage={page - 1}
             />
         </>
     );

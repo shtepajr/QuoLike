@@ -18,35 +18,18 @@ namespace QuoLike.Server.Data.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Quote>> GetAllAsync(QueryObject queryObject)
+        public async Task<IEnumerable<Quote>> GetPaginatedAsync(QueryObject queryObject, string userId)
         {
-            var quotes = _context.Quotes.AsQueryable();
+            var quotes = _context.Quotes.Where(q => q.UserId == userId).AsQueryable();
 
             // Tabs
             if (queryObject.isFavorite.HasValue)
             {
-                quotes = quotes.Where(q => q.isFavorite == queryObject.isFavorite);
+                quotes = quotes.Where(q => q.IsFavorite == queryObject.isFavorite);
             }
             else if (queryObject.isArchived.HasValue)
             {
-                quotes = quotes.Where(q => q.isArchived == queryObject.isArchived);
-            }
-
-            return await quotes.ToListAsync();
-        }
-
-        public async Task<IEnumerable<Quote>> GetPaginatedAsync(QueryObject queryObject)
-        {
-            var quotes = _context.Quotes.AsQueryable();
-
-            // Tabs
-            if (queryObject.isFavorite.HasValue)
-            {
-                quotes = quotes.Where(q => q.isFavorite == queryObject.isFavorite);
-            }
-            else if (queryObject.isArchived.HasValue)
-            {
-                quotes = quotes.Where(q => q.isArchived == queryObject.isArchived);
+                quotes = quotes.Where(q => q.IsArchived == queryObject.isArchived);
             }
 
             // Pagination
@@ -57,16 +40,19 @@ namespace QuoLike.Server.Data.Repositories
             return await quotes.ToListAsync();
         }
 
-        public async Task<int> GetTotalAsync()
+        public async Task<int> GetTotalAsync(string userId)
         {
-            return await _context.Quotes.CountAsync();
+            return await _context.Quotes.Where(q => q.UserId == userId).CountAsync();
         }
-
-        public async Task<Quote?> GetAsync(string id)
+        public async Task<Quote?> GetAsync(string id, string userId)
         {
-            return await _context.Quotes.FindAsync(id);
+            return await _context.Quotes.FirstOrDefaultAsync(q => q.QuoteId == id && q.UserId == userId);
         }
-        public async Task<Quote> AddAsync(Quote quote)
+        public async Task<Quote?> GetByExternalIdAsync(string externalId, string userId)
+        {
+            return await _context.Quotes.FirstOrDefaultAsync(q => q._id == externalId && q.UserId == userId);
+        }
+        public async Task<Quote?> AddAsync(Quote quote)
         {
             var createdQuote = await _context.Quotes.AddAsync(quote);
             await _context.SaveChangesAsync();
@@ -80,9 +66,9 @@ namespace QuoLike.Server.Data.Repositories
             return quote;
         }
 
-        public async Task<Quote?> DeleteAsync(string id)
+        public async Task<Quote?> DeleteAsync(string id, string userId)
         {
-            var quote = await _context.Quotes.FindAsync(id);
+            var quote = await _context.Quotes.FirstOrDefaultAsync(q => q.QuoteId == id && q.UserId == userId);
             if (quote == null)
                 return null;
 

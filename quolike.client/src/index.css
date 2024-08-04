@@ -66,6 +66,8 @@ html, body {
 
 .quote {
     border: 1px solid red;
+    background-color: var(--primary-color);
+    color: var(--text-color);
 }
 
 .quotes {
@@ -75,4 +77,35 @@ html, body {
 
 .pagination {
     align-self: center;
+}
+
+/* styles.css */
+:root {
+    --primary-color-light: #ffc300;
+    --primary-color-dark: #003566;
+    --bg-color-light: #ffffff;
+    --bg-color-dark: #343a40;
+    --text-color-light: #000000;
+    --text-color-dark: #ffffff;
+}
+
+body.light-theme {
+    --primary-color: var(--primary-color-light);
+    --bg-color: var(--bg-color-light);
+    --text-color: var(--text-color-light);
+}
+
+body.dark-theme {
+    --primary-color: var(--primary-color-dark);
+    --bg-color: var(--bg-color-dark);
+    --text-color: var(--text-color-dark);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.navbar-custom {
+    background-color: var(--bg-color);
 }

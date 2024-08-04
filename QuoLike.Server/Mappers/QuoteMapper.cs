@@ -1,5 +1,5 @@
-﻿using QuoLike.Server.DTOs;
-using QuoLike.Server.DTOs.Quotable;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using QuoLike.Server.DTOs;
 using QuoLike.Server.Models;
 
 namespace QuoLike.Server.Mappers
@@ -11,9 +11,20 @@ namespace QuoLike.Server.Mappers
             return new Quote()
             {
                 QuoteId = updateDTO.QuoteId,
-                ExternalId = updateDTO.ExternalId,
-                isArchived = updateDTO.isArchived,
-                isFavorite = updateDTO.isFavorite            
+                _id = updateDTO._id,
+                IsArchived = updateDTO.IsArchived,
+                IsFavorite = updateDTO.IsFavorite            
+            };
+        }
+
+        public static QuoteUpdateDTO ToUpdateDTO(this Quote updateDTO)
+        {
+            return new QuoteUpdateDTO()
+            {
+                QuoteId = updateDTO.QuoteId,
+                _id = updateDTO._id,
+                IsArchived = updateDTO.IsArchived,
+                IsFavorite = updateDTO.IsFavorite
             };
         }
 
@@ -22,9 +33,16 @@ namespace QuoLike.Server.Mappers
             return new QuoteDTO()
             {
                 QuoteId = quoteModel.QuoteId,
-                ExternalId = quoteModel.ExternalId,
-                isArchived = quoteModel.isArchived,
-                isFavorite = quoteModel.isFavorite
+                _id = quoteModel._id,
+                Author = quoteModel.Author,
+                AuthorSlug = quoteModel.AuthorSlug,
+                Content = quoteModel.Content,
+                DateAdded = quoteModel.DateAdded,
+                DateModified = quoteModel.DateModified,
+                Length = quoteModel.Length,
+                Tags = quoteModel.Tags,
+                isArchived = quoteModel.IsArchived,
+                isFavorite = quoteModel.IsFavorite
             };
         }
 
@@ -32,9 +50,16 @@ namespace QuoLike.Server.Mappers
         {
             return new Quote()
             {
-                ExternalId = createDTO.ExternalId,
-                isArchived = createDTO.isArchived,
-                isFavorite = createDTO.isFavorite
+                _id = createDTO._id,
+                Author = createDTO.Author,
+                AuthorSlug = createDTO.AuthorSlug,
+                Content = createDTO.Content,
+                DateAdded = createDTO.DateAdded,
+                DateModified = createDTO.DateModified,
+                Length = createDTO.Length,
+                Tags = createDTO.Tags,
+                IsArchived = createDTO.IsArchived,
+                IsFavorite = createDTO.IsFavorite
             };
         }
     }

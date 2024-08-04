@@ -24,14 +24,14 @@ namespace QuoLike.Server.Migrations
                     b.Property<string>("QuoteId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ExternalId")
+                    b.Property<string>("_id")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("isArchived")
+                    b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("isFavorite")
+                    b.Property<bool>("IsFavorite")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("QuoteId");

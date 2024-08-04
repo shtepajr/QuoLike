@@ -1,10 +1,12 @@
-﻿namespace QuoLike.Server.Models
+﻿using QuoLike.Server.Models.Quotable;
+
+namespace QuoLike.Server.Models
 {
-    public class Quote
+    public class Quote : QuotableQuote
     {
         public string QuoteId { get; set; }
-        public string ExternalId { get; set; }
-        public bool isFavorite { get; set; }
-        public bool isArchived { get; set; }
+        public string UserId { get; set; }
+        public bool? IsFavorite { get; set; }
+        public bool? IsArchived { get; set; }
     }
 }

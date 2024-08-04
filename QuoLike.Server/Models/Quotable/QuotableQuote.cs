@@ -1,4 +1,4 @@
-﻿namespace QuoLike.Server.DTOs.Quotable
+﻿namespace QuoLike.Server.Models.Quotable
 {
     public class QuotableQuote
     {

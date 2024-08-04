@@ -1,8 +1,16 @@
 
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using QuoLike.Server.Controllers;
 using QuoLike.Server.Data;
 using QuoLike.Server.Data.Repositories;
+using QuoLike.Server.Services;
+using System.Text;
 
 namespace QuoLike.Server
 {
@@ -14,10 +22,26 @@ namespace QuoLike.Server
 
             // Add services to the container.
             builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
+            builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+            builder.Services.AddScoped<IAuthorizationHandler, IsOwnerAuthorizationHandler>();
+
             builder.Services.AddDbContext<QuoLikeDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("QuoLikeDbContext")));
             builder.Services.AddHttpClient();
 
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>() // Identity API 1/2
+                .AddEntityFrameworkStores<QuoLikeDbContext>();
+
+            // Email
+            //builder.Services.Configure<IdentityOptions>(options =>
+            //{
+            //    options.SignIn.RequireConfirmedEmail = true; // turn on email for Identity API
+            //});
+
+            //builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration); // email sender
+            //builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+            // Cors policy 1/2
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", builder =>
@@ -48,12 +72,12 @@ namespace QuoLike.Server
 
             app.UseHttpsRedirection();
 
-            // Use CORS
-            app.UseCors("CorsPolicy");
+            app.UseCors("CorsPolicy"); // Cors policy 2/2
 
             app.UseAuthorization();
 
-
+            app.MapIdentityApi<IdentityUser>(); // Identity API 2/2
+ 
             app.MapControllers();
 
             app.MapFallbackToFile("/index.html");

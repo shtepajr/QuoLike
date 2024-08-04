@@ -22,6 +22,7 @@ export default function Paginate(props) {
                 containerClassName="pagination"
                 activeClassName="active"
                 renderOnZeroPageCount={null}
+                forcePage={props.forcePage}
             />
         </div>
     )

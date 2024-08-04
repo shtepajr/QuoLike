@@ -17,10 +17,10 @@ namespace QuoLike.Server.Migrations
             migrationBuilder.RenameColumn(
                 name: "Action",
                 table: "Quotes",
-                newName: "isFavorite");
+                newName: "IsFavorite");
 
             migrationBuilder.AddColumn<bool>(
-                name: "isArchived",
+                name: "IsArchived",
                 table: "Quotes",
                 type: "INTEGER",
                 nullable: false,
@@ -40,11 +40,11 @@ namespace QuoLike.Server.Migrations
                 table: "Quotes");
 
             migrationBuilder.DropColumn(
-                name: "isArchived",
+                name: "IsArchived",
                 table: "Quotes");
 
             migrationBuilder.RenameColumn(
-                name: "isFavorite",
+                name: "IsFavorite",
                 table: "Quotes",
                 newName: "Action");
 

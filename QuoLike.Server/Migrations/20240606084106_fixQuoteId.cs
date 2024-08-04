@@ -13,7 +13,7 @@ namespace QuoLike.Server.Migrations
             migrationBuilder.RenameColumn(
                 name: "QuoteSelectId",
                 table: "Quotes",
-                newName: "ExternalId");
+                newName: "_id");
 
             migrationBuilder.RenameColumn(
                 name: "QuoteId",
@@ -25,7 +25,7 @@ namespace QuoLike.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "ExternalId",
+                name: "_id",
                 table: "Quotes",
                 newName: "QuoteSelectId");
 
