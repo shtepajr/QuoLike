@@ -2,7 +2,7 @@ import ReactPaginate from 'react-paginate';
 
 export default function Paginate(props) {
     return (
-        <div className="pagination">
+        <div className="pagination justify-content-center mt-3">
             <ReactPaginate
                 nextLabel="next >"
                 onPageChange={props.handlePageClick}

@@ -5,8 +5,8 @@ export default function Tabs() {
 
     return (
         <>
-            <nav>
-                <ul className="nav nav-tabs">
+            <nav className="d-flex justify-content-center mt-2 mb-2">
+                <ul className="nav nav-underline">
                     {tabs.map((tab) => {
                         return (
                             <li key={tab} className="nav-item">

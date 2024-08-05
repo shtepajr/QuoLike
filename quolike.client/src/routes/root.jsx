@@ -118,7 +118,9 @@ export default function Root() {
                 </div>
             </header>
             <main className="main">
-                <Outlet />
+                <div className="container overflow-hidden">
+                    <Outlet />
+                </div>
             </main>
         </>
     );

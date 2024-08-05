@@ -1,20 +1,12 @@
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
-    color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Google material */
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
 }
+
 .material-symbols-outlined {
     user-select: none;
 }
@@ -48,54 +40,7 @@
     font-size: 48px;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-}
-
-html, body {
-    height: 100%;
-}
-
-    /*#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-}
-*/
-
-    body #root {
-        height: 100%;
-    }
-
-#root .header {
-    height: 5%;
-}
-
-#root .main {
-    height: 95%;
-}
-
-.main .tabs {
-    height: 5%;
-}
-
-.main .quotes {
-    height: 90%;
-    overflow-y: scroll;
-}
-
-.main .pagination {
-    height: 10%;
-}
-
-.header {
-    display: flex;
-    column-gap: 80px;
-}
-
-.main {
+/*.main {
     display: flex;
     flex-direction: column;
     align-content: center;
@@ -114,10 +59,10 @@ html, body {
 
 .pagination {
     align-self: center;
-}
+}*/
 
 /* styles.css */
-:root {
+/*:root {
     --primary-color-light: #ffc300;
     --primary-color-dark: #003566;
     --bg-color-light: #ffffff;
@@ -125,7 +70,7 @@ html, body {
     --text-color-light: #000000;
     --text-color-dark: #ffffff;
 }
-
+*/
 /*body.light-theme {
     --primary-color: var(--primary-color-light);
     --bg-color: var(--bg-color-light);
@@ -138,11 +83,8 @@ body.dark-theme {
     --text-color: var(--text-color-dark);
 }*/
 
-body {
+/*body {
     background-color: var(--bg-color);
     color: var(--text-color);
 }
-
-.navbar-custom {
-    background-color: var(--bg-color);
-}
+*/
