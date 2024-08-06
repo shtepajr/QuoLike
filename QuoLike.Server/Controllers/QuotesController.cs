@@ -27,7 +27,7 @@ namespace QuoLike.Server.Controllers
         private readonly IQuoteRepository _quoteRepository;
         private readonly HttpClient _httpClient;
         private readonly UserManager<IdentityUser> _userManager;
-        public QuotesController(ILogger<QuotesController> logger, IQuoteRepository quoteSelectRepository, 
+        public QuotesController(ILogger<QuotesController> logger, IQuoteRepository quoteSelectRepository,
             HttpClient httpClient, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
@@ -203,6 +203,16 @@ namespace QuoLike.Server.Controllers
             }
 
             return Ok(q.ToQuoteDTO());
+        }
+
+        [HttpGet("random")]
+        public async Task<IActionResult> GetQuotableRandom()
+        {
+            string requestUrl = $"https://api.quotable.io/random";
+            var response = await _httpClient.GetAsync(requestUrl);
+            var data = await response.Content.ReadAsStringAsync();
+            var quotableQuote = JsonConvert.DeserializeObject<QuotableQuote>(data);
+            return Ok(quotableQuote);
         }
     }
 }

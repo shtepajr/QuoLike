@@ -5,7 +5,8 @@ import {
     fetchQuotableMerged,
     fetchFavoritesMerged,
     fetchArchivedMerged,
-    toggleEntry
+    toggleEntry,
+    fetchQuotableRandom
 } from '../quotes-data.js'
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../hooks/useTheme';
@@ -38,6 +39,12 @@ export async function archivedLoader({ request }) {
 
     const data = await fetchArchivedMerged(page, limit && 6);
     console.log('archivedLoader: data loaded');
+    return { ...data };
+}
+
+export async function homeLoader() {
+    const data = await fetchQuotableRandom();
+    console.log('homeLoader: data loaded');
     return { ...data };
 }
 

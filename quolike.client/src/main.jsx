@@ -15,7 +15,8 @@ import Root, {
     allLoader,
     favoritesLoader,
     archivedLoader,
-    toggleAction
+    toggleAction,
+    homeLoader
 } from './routes/Root';
 import Tabs from './routes/Tabs';
 import Tab from './routes/Tab';
@@ -38,7 +39,7 @@ const router = createBrowserRouter(
             <Route element={<AuthLayout />} errorElement={<ErrorPage />}>
                 <Route element={<ProtectedLayout />}>
                     <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
-                        <Route index element={<HomePage />} />
+                        <Route index element={<HomePage />} loader={homeLoader} />
                         <Route element={<Tabs />}>
                             <Route path="all/:page?" element={<Tab />} loader={allLoader}>
                                 <Route path="toggle" action={toggleAction}></Route>
