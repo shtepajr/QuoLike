@@ -4,12 +4,12 @@ export default function Paginate(props) {
     return (
         <div className="pagination justify-content-center mt-3">
             <ReactPaginate
-                nextLabel="next >"
+                nextLabel=">"
                 onPageChange={props.handlePageClick}
                 pageRangeDisplayed={3}
                 marginPagesDisplayed={2}
                 pageCount={props.totalPages}
-                previousLabel="< previous"
+                previousLabel="<"
                 pageClassName="page-item"
                 pageLinkClassName="page-link"
                 previousClassName="page-item"

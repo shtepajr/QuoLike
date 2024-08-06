@@ -13,7 +13,7 @@ export default function Quote(quote) {
 
     return (
         <div className="col">
-            <div className="quote card flex-row">
+            <div className="quote card h-100 flex-row align-items-center ps-3">
                 <div className="col-10 d-flex flex-column text-center">
                     <div className="quote--content">{quote.content}</div>
                     <em className="quote--author text-secondary">- {quote.author}</em>

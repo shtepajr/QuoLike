@@ -43,7 +43,7 @@ export default function Tab() {
 
     return (
         <>
-            <div className="quotes row row-cols-1 row-cols-md-2 g-3">
+            <div className="quotes row row-cols-1 row-cols-md-2 g-3 overflow-auto">
                 {quotes}
             </div>
             <Paginate
