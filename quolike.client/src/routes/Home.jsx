@@ -10,7 +10,7 @@ export default function HomePage() {
             <div className=" d-flex flex-column align-items-center gap-4 mt-2">
                 <h1>Welcome to QuoLike</h1>
                 <NavLink to="all?page=1" className="btn btn-warning">Let's start</NavLink>
-                <img src={homeImage} className="rounded-5 w-75" />
+                <img src={homeImage} className="rounded-5 w-75 shadow" />
             </div>
         </>
     )
