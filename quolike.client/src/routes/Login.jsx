@@ -36,7 +36,7 @@ export const LoginPage = () => {
                         <div className="col-12 col-sm-10 col-md-6 col-lg-5">
                             <form onSubmit={handleLogin}>
                                 <img className="mb-4" src={logo} alt="logo" width="115" />
-                                <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
+                                <h1 className="h3 mb-3 fw-normal">Log in</h1>
 
                                 {errors && <p>{errors}</p>}
 
@@ -64,7 +64,7 @@ export const LoginPage = () => {
                                     />
                                     <label htmlFor="floatingPassword">Password</label>
                                 </div>
-                                <button className="btn btn-primary w-100 py-2 my-3" type="submit">Sign in</button>
+                                <button className="btn btn-primary w-100 py-2 my-3" type="submit">Log in</button>
 
                                 <div className="d-flex flex-column align-items-center">
                                     <div>
