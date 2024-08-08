@@ -2,6 +2,7 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { resetPassword } from "../authentication";
 import { useState } from "react";
+import logo from '../assets/quolike-high-resolution-logo-transparent.png';
 
 export function resetPasswordLoader({ request }) {
     const url = new URL(request.url);
@@ -56,24 +57,59 @@ export const ResetPasswordPage = () => {
     }
 
     return (
-        <div>
-            <h1>Reset Password</h1>
-            <p>Enter your new password.</p>
-            <form onSubmit={resetPasswordSubmit}>
-                <input hidden name="email" type="email" defaultValue={email} />
-                <input hidden name="resetCode" type="text" defaultValue={resetCode} />
-                <label>
-                    New Password
-                    <input required name="newPassword" type="password" onChange={handleInputChange} value={formData.newPassword} />
-                </label>
-                <label>
-                    Confirm Password
-                    <input required name="confirmPassword" type="password" onChange={handleInputChange} value={formData.confirmPassword} />
-                </label>
-                <input type="submit" value="Submit" />
-            </form>
-            <Link to="/login">Back to Login</Link>
-            {errors && <p>{errors}</p>}
-        </div>
+        <>
+            <main className="h-75 d-flex align-items-center">
+                <div className="container">
+                    <div className="row justify-content-center">
+                        <div className="col-12 col-sm-10 col-md-6 col-lg-5">
+                            <form onSubmit={resetPasswordSubmit}>
+                                <img className="mb-4" src={logo} alt="logo" width="115" />
+                                <h1 className="h3 mb-3 fw-normal">Reset Password</h1>
+                                <p>Enter your new password.</p>
+                                {errors && <p>{errors}</p>}
+
+                                <input hidden name="email" type="email" defaultValue={email} />
+                                <input hidden name="resetCode" type="text" defaultValue={resetCode} />
+
+                                <div className="form-floating">
+                                    <input
+                                        type="password"
+                                        name="newPassword"
+                                        className="form-control"
+                                        id="floatingNewPassword"
+                                        placeholder="New password"
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <label htmlFor="floatingNewPassword">New password</label>
+                                </div>
+                                <div className="form-floating">
+                                    <input
+                                        type="password"
+                                        name="confirmPassword"
+                                        className="form-control"
+                                        id="floatingConfirmPassword"
+                                        placeholder="Confirm password"
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <label htmlFor="floatingConfirmPassword">Confirm password</label>
+                                </div>
+                           
+                                <button className="btn btn-primary w-100 py-2 my-3" type="submit">Change password</button>
+
+                                <div className="d-flex flex-column align-items-center">
+                                    <Link to="/login" className="link-underline link-underline-opacity-0">Back to Login</Link>
+                                    <p className="mt-5 mb-3 text-body-secondary">&#169;2024 QuoLike</p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+
+
+        </>
     );
 }

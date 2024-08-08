@@ -38,17 +38,10 @@ export default function ProfilePage() {
         } else {
             try {
                 await manageInfo({ newEmail: user.email, oldPassword: passwordFormData.oldPassword, newPassword: passwordFormData.newPassword });
+
+            } catch (e) {
                 setIsEditingPassword(false);
                 setMessage('Password changed successfully');
-            } catch (e) {
-                if (e.detail) {
-                    setErrors(e.detail);
-                } else if (e.errors) {
-                    const errorMessages = Object.values(e.errors).flat();
-                    setErrors(errorMessages);
-                } else {
-                    setErrors([e.title || 'Reset password failed']);
-                }
             }
         }
     };
@@ -85,8 +78,8 @@ export default function ProfilePage() {
                 <div className="col-12 col-sm-10 col-md-6 col-lg-5">
                     <form onSubmit={handlePasswordSubmit}>
                         <h1 className="h3 mb-3 fw-normal">Profile</h1>
-
-
+                        <p>{user.email}</p>
+                        {message && <p className="text-primary">{message}</p>}
                         {isEditingPassword ? (
                             <>
                                 {errors && <p>{errors}</p>}
@@ -136,7 +129,6 @@ export default function ProfilePage() {
                                 <button className="btn btn-secondary" type="button" onClick={() => setIsEditingPassword(true)}>
                                     Change password
                                 </button>
-                                {message && <p>{message}</p>}
                             </>
                         )}
                     </form>

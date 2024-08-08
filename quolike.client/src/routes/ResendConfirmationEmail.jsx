@@ -35,11 +35,12 @@ export function ResendConfirmationEmailPage() {
                                 <h1 className="h3 mb-3 fw-normal">Resend Confirmation Email</h1>
                                 <p>Enter your email address and we will send you a link to confirm your email.</p>
 
-                                {message && <p>{message}</p>}
+                                {message && <p className="text-primary">{message}</p>}
 
                                 <div className="form-floating">
                                     <input
                                         type="email"
+                                        name="email"
                                         className="form-control"
                                         id="floatingInput"
                                         placeholder="name@example.com"

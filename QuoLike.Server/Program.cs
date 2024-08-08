@@ -33,13 +33,13 @@ namespace QuoLike.Server
                 .AddEntityFrameworkStores<QuoLikeDbContext>();
 
             // Email
-            //builder.Services.Configure<IdentityOptions>(options =>
-            //{
-            //    options.SignIn.RequireConfirmedEmail = true; // turn on email for Identity API
-            //});
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = true; // turn on email for Identity API
+            });
 
-            //builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration); // email sender
-            //builder.Services.AddTransient<IEmailSender, EmailSender>();
+            builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration); // email sender
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             // Cors policy 1/2
             builder.Services.AddCors(options =>
