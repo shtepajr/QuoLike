@@ -39,7 +39,6 @@ namespace QuoLike.Server.Data.Repositories
 
             return await quotes.ToListAsync();
         }
-
         public async Task<int> GetTotalAsync(string userId)
         {
             return await _context.Quotes.Where(q => q.UserId == userId).CountAsync();
@@ -58,14 +57,12 @@ namespace QuoLike.Server.Data.Repositories
             await _context.SaveChangesAsync();
             return createdQuote.Entity;
         }
-
         public async Task<Quote?> UpdateAsync(Quote quote)
         {
             _context.Entry(quote).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return quote;
         }
-
         public async Task<Quote?> DeleteAsync(string id, string userId)
         {
             var quote = await _context.Quotes.FirstOrDefaultAsync(q => q.QuoteId == id && q.UserId == userId);

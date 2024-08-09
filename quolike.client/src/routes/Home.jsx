@@ -1,9 +1,17 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import Quote from '../components/Quote';
+import homeImage from '../assets/home.jpg';
 export default function HomePage() {
+    const randomQuote = useLoaderData();
+
     return (
-        <div>
-            <h1>Index</h1>
-            <NavLink to="all?page=1" className="nav-link text-primary">Let's go to quotes</NavLink>
-        </div>
+        <>
+            <div className=" d-flex flex-column align-items-center gap-4 mt-2">
+                <h1>Welcome to QuoLike</h1>
+                <NavLink to="all?page=1" className="btn btn-warning">Let's start</NavLink>
+                <img src={homeImage} className="rounded-5 w-75 shadow" />
+            </div>
+        </>
     )
 }

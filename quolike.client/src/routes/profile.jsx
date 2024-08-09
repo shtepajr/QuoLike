@@ -3,6 +3,8 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { manageInfo, getUserInfo, manageDelete } from '../authentication';
 import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../hooks/useAuth';
+import logo from '../assets/quolike-high-resolution-logo-transparent.png';
+
 export function profileLoader() {
     return getUserInfo();
 }
@@ -21,7 +23,7 @@ export default function ProfilePage() {
         confirmPassword: '',
     });
 
-    const handlePasswordChange = (e) => {
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
         setPasswordFormData((prevData) => ({
             ...prevData,
@@ -36,17 +38,10 @@ export default function ProfilePage() {
         } else {
             try {
                 await manageInfo({ newEmail: user.email, oldPassword: passwordFormData.oldPassword, newPassword: passwordFormData.newPassword });
+
+            } catch (e) {
                 setIsEditingPassword(false);
                 setMessage('Password changed successfully');
-            } catch (e) {
-                if (e.detail) {
-                    setErrors(e.detail);
-                } else if (e.errors) {
-                    const errorMessages = Object.values(e.errors).flat();
-                    setErrors(errorMessages);
-                } else {
-                    setErrors([e.title || 'Reset password failed']);
-                }
             }
         }
     };
@@ -70,7 +65,7 @@ export default function ProfilePage() {
             } else {
                 setErrors([e.title || 'Reset password failed']);
             }
-        } 
+        }
     };
 
     const handleDeleteCancel = () => {
@@ -78,49 +73,74 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className="profile container">
-            <h1>Profile</h1>
-            <p>
-                This is your profile&nbsp;
-                <b>{user.email}</b>
-            </p>
-            <div className="row d-flex flex-column justify-content-center g-3">
-                <div className="col-12">
+        <div className="profile container mt-2">
+            <div className="row justify-content-center">
+                <div className="col-12 col-sm-10 col-md-6 col-lg-5">
                     <form onSubmit={handlePasswordSubmit}>
+                        <h1 className="h3 mb-3 fw-normal">Profile</h1>
+                        <p>{user.email}</p>
+                        {message && <p className="text-primary">{message}</p>}
                         {isEditingPassword ? (
                             <>
-                                <label>
-                                    Old password
-                                    <input type="password" name="oldPassword" onChange={handlePasswordChange} value={passwordFormData.oldPassword} />
-                                </label>
-                                <label>
-                                    New password
-                                    <input type="password" name="newPassword" onChange={handlePasswordChange} value={passwordFormData.newPassword} />
-                                </label>
-                                <label>
-                                    Confirm new password
-                                    <input type="password" name="confirmPassword" onChange={handlePasswordChange} value={passwordFormData.confirmPassword} />
-                                </label>
-                                <input type="submit" value="Save" />
-                                <input type="button" value="Cancel" onClick={() => setIsEditingPassword(false)} />
                                 {errors && <p>{errors}</p>}
+
+                                <div className="form-floating">
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        id="floatingPassword"
+                                        placeholder="Password"
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <label htmlFor="floatingPassword">Password</label>
+                                </div>
+                                <div className="form-floating">
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        id="floatingNewPassword"
+                                        placeholder="New password"
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <label htmlFor="floatingNewPassword">New password</label>
+                                </div>
+                                <div className="form-floating">
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        id="floatingConfirmNewPassword"
+                                        placeholder="Confirm new password"
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <label htmlFor="floatingConfirmNewPassword">Confirm new password</label>
+                                </div>
+                                <div className="d-flex justify-content-end mt-2">
+                                    <button className="btn btn-primary" type="submit">Save</button>
+                                    <button className="btn btn-secondary" type="button" onClick={() => setIsEditingPassword(false)}>
+                                        Cancel
+                                    </button>
+                                </div>
                             </>
                         ) : (
                             <>
-                                <input type="button" value="Change password" onClick={() => setIsEditingPassword(true)} />
-                                {message && <p>{message}</p>}
+                                <button className="btn btn-secondary" type="button" onClick={() => setIsEditingPassword(true)}>
+                                    Change password
+                                </button>
                             </>
                         )}
                     </form>
-                </div>
-                <div className="col-12">
-                    <button onClick={handleDeleteClick}>Delete account</button>
-                    <ConfirmModal
-                        show={showModal}
-                        message="Are you sure you want to delete this item?"
-                        onConfirm={handleDeleteConfirm}
-                        onCancel={handleDeleteCancel}
-                    />
+                    <div className="mt-2">
+                        <button className="btn btn-danger" onClick={handleDeleteClick}>Delete account</button>
+                        <ConfirmModal
+                            show={showModal}
+                            message="Are you sure you want to delete your account?"
+                            onConfirm={handleDeleteConfirm}
+                            onCancel={handleDeleteCancel}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
