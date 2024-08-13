@@ -7,14 +7,16 @@
 > **Frontend:** React, React Router, react-paginate, JavaScript, Bootstrap, HTML, CSS.
 
 ## Screenshots
-![login][1]
-![all][2]
-![profile][3]
-![profile_password][4]
-![delete_account][5]
+![welcome][1]
+![login][2]
+![all][3]
+![profile][4]
+![profile_password][5]
+![delete_account][6]
 
-[1]: Screenshots/login.png "login"
-[2]: Screenshots/all.png "all"
-[3]: Screenshots/profile.png "profile"
-[4]: Screenshots/profile_password.png "profile_password"
-[5]: Screenshots/delete_account.png "delete_account"
+[1]: Screenshots/welcome.png "welcome"
+[2]: Screenshots/login.png "login"
+[3]: Screenshots/all.png "all"
+[4]: Screenshots/profile.png "profile"
+[5]: Screenshots/profile_password.png "profile_password"
+[6]: Screenshots/delete_account.png "delete_account"
