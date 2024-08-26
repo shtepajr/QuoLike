@@ -140,9 +140,8 @@ namespace QuoLike.Server.Controllers
             var existingQuote = await _quoteRepository.GetByExternalIdAsync(quote._id, userId);
             if (existingQuote == null)
             {
-                var user = await _userManager.GetUserAsync(User);
                 var toAdd = quote.ToQuote();
-                toAdd.UserId = user.Id;
+                toAdd.UserId = userId;
                 existingQuote = await _quoteRepository.AddAsync(toAdd);
                 return CreatedAtAction(nameof(Get), new { id = existingQuote.QuoteId }, existingQuote.ToQuoteDTO());
             }
