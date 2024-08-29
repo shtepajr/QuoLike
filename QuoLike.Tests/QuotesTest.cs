@@ -47,12 +47,13 @@ namespace QuoLike.Tests
         {
             // Arrange
             var quoteId = "1";
+            var userId = "user123";
             var quote = new Quote { _id = quoteId, UserId = userId, Content = "Test Quote" };
             _quoteRepositoryMock.Setup(repo => repo.GetAsync(quoteId, userId))
                                 .ReturnsAsync(quote);
 
 
-            var controller = new QuotesController(_loggerMock.Object, _quoteRepositoryMock.Object,
+            var controller = new QuotesController(_loggerMock.Object, _quoteRepositoryMock.Object, 
                 _httpClientMock.Object, _userManagerMock.Object);
 
             // Act
