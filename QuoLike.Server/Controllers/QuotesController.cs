@@ -70,20 +70,20 @@ namespace QuoLike.Server.Controllers
             var merged = from qtb in quotableQuotes.Results
                          join q in dbQuotes on qtb._id equals q._id into gj
                          from subgroup in gj.DefaultIfEmpty()
-                         select new
+                         select new MergedQuoteDTO()
                          {
-                             qtb.Tags,
-                             qtb._id,
-                             qtb.Content,
-                             qtb.Author,
-                             qtb.AuthorSlug,
-                             qtb.Length,
-                             qtb.DateAdded,
-                             qtb.DateModified,
-                             isFavorite = subgroup is null ? false : subgroup.IsFavorite,
-                             isArchived = subgroup is null ? false : subgroup.IsArchived,
+                             Tags = qtb.Tags,
+                             _id = qtb._id,
+                             Content = qtb.Content,
+                             Author = qtb.Author,
+                             AuthorSlug = qtb.AuthorSlug,
+                             Length = qtb.Length,
+                             DateAdded = qtb.DateAdded,
+                             DateModified = qtb.DateModified,
+                             IsFavorite = subgroup is null ? false : subgroup.IsFavorite,
+                             IsArchived = subgroup is null ? false : subgroup.IsArchived,
                          };
-            return Ok(new
+            return Ok(new MergedQuotesDTO
             {
                 Page = queryObject.Page,
                 Count = merged.Count(),
@@ -103,13 +103,14 @@ namespace QuoLike.Server.Controllers
             int totalDbQuotes = await _quoteRepository.GetTotalAsync(userId);
             int totalDbPages = (int)Math.Ceiling(totalDbQuotes / (double)queryObject.Limit);
 
-            return Ok(new
+            IEnumerable<MergedQuoteDTO> results = dbQuotes.Select(quote => quote.ToMergedQuoteDTO());
+            return Ok(new MergedQuotesDTO
             {
                 Page = queryObject.Page,
                 Count = dbQuotes.Count(),
                 TotalCount = totalDbQuotes,
                 TotalPages = totalDbPages,
-                Results = dbQuotes
+                Results = results
             });
         }
 

@@ -62,5 +62,23 @@ namespace QuoLike.Server.Mappers
                 IsFavorite = createDTO.IsFavorite
             };
         }
+        public static MergedQuoteDTO ToMergedQuoteDTO(this Quote quoteModel)
+        {
+            return new MergedQuoteDTO()
+            {
+                QuoteId = quoteModel.QuoteId,
+                _id = quoteModel._id,
+                Author = quoteModel.Author,
+                AuthorSlug = quoteModel.AuthorSlug,
+                Content = quoteModel.Content,
+                DateAdded = quoteModel.DateAdded,
+                DateModified = quoteModel.DateModified,
+                Length = quoteModel.Length,
+                Tags = quoteModel.Tags,
+                IsArchived = quoteModel.IsArchived,
+                IsFavorite = quoteModel.IsFavorite,
+                UserId = quoteModel.UserId,
+            };
+        }
     }
 }
