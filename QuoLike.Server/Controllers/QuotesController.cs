@@ -40,7 +40,15 @@ namespace QuoLike.Server.Controllers
         public async Task<IActionResult> GetQuotableMerged([FromQuery] QueryObject queryObject)
         {
             string requestUrl = $"https://api.quotable.io/quotes?page={queryObject.Page}&limit={queryObject.Limit}";
-            var response = await _httpClient.GetAsync(requestUrl);
+
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true // works even with no SSL
+            };
+
+            HttpClient httpClient = new HttpClient(handler);
+
+            var response = await httpClient.GetAsync(requestUrl);
             var data = await response.Content.ReadAsStringAsync();
             var quotableQuotes = JsonConvert.DeserializeObject<QuotableQuoteConnection>(data);
 
@@ -209,7 +217,15 @@ namespace QuoLike.Server.Controllers
         public async Task<IActionResult> GetQuotableRandom()
         {
             string requestUrl = $"https://api.quotable.io/random";
-            var response = await _httpClient.GetAsync(requestUrl);
+
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true // works even with no SSL
+            };
+
+            HttpClient httpClient = new HttpClient(handler);
+
+            var response = await httpClient.GetAsync(requestUrl);
             var data = await response.Content.ReadAsStringAsync();
             var quotableQuote = JsonConvert.DeserializeObject<QuotableQuote>(data);
             return Ok(quotableQuote);

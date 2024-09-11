@@ -1,5 +1,4 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.css';
 import '../index.css';
 import {
     fetchQuotableMerged,
@@ -11,7 +10,6 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../hooks/useTheme';
 import logo from '../assets/quolike-high-resolution-logo-transparent.png';
-
 
 export const limit = 6;
 

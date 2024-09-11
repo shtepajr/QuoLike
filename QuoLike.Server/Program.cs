@@ -1,16 +1,10 @@
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
-using QuoLike.Server.Controllers;
 using QuoLike.Server.Data;
 using QuoLike.Server.Data.Repositories;
 using QuoLike.Server.Services;
-using System.Text;
 
 namespace QuoLike.Server
 {
