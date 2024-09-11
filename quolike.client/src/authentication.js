@@ -1,4 +1,4 @@
-export const origin = 'https://localhost:7282';
+// export const origin = 'https://api:8081';
 
 export async function login({ email, password }) {
     if (!email || !password) {
@@ -7,7 +7,7 @@ export async function login({ email, password }) {
     const user = { email, password };
 
     try {
-        const response = await fetch(`${origin}/login`, {
+        const response = await fetch(`/api/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ export async function register({ email, password }) {
     }
     const user = { email, password };
     try {
-        const response = await fetch(`${origin}/register`, {
+        const response = await fetch(`/api/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export async function forgotPassword(email) {
         throw new Error('Email is required');
     }
     try {
-        const response = await fetch(`${origin}/api/auth/forgotPasswordCustom`, {
+        const response = await fetch(`/api/auth/forgotPasswordCustom`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ export async function resetPassword({ resetCode, email, newPassword }) {
     const user = { resetCode, email, newPassword };
     console.log(user);
     try {
-        const response = await fetch(`${origin}/resetPassword`, {
+        const response = await fetch(`/api/auth/resetPassword`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ export async function manageInfo({ newEmail, newPassword, oldPassword }) {
     }
     const userData = { newEmail, newPassword, oldPassword };
     try {
-        const response = await fetch(`${origin}/manage/info`, {
+        const response = await fetch(`/api/auth/manage/info`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ export async function getUserInfo() {
     }
     const { accessToken } = JSON.parse(user);
     try {
-        const response = await fetch(`${origin}/manage/info`, {
+        const response = await fetch(`/api/auth/manage/info`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -156,7 +156,7 @@ export async function manageDelete() {
     }
     const { accessToken } = JSON.parse(user);
     try {
-        const response = await fetch(`${origin}/api/auth/manage/delete`, {
+        const response = await fetch(`/api/auth/manage/delete`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -178,7 +178,7 @@ export async function resendConfirmationEmail(email) {
         throw new Error('Email is required');
     }
     try {
-        const response = await fetch(`${origin}/resendConfirmationEmail`, {
+        const response = await fetch(`/api/auth/resendConfirmationEmail`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

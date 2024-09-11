@@ -9,6 +9,13 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "QuoLike.Client", "quolike.c
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuoLike.Tests", "QuoLike.Tests\QuoLike.Tests.csproj", "{3351B6FD-DE0E-4051-9068-7E59291E8F8F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0460FC5B-B501-4F91-9B68-0B3D6162185B}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		docker-compose.debug.yml = docker-compose.debug.yml
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

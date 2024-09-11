@@ -31,7 +31,11 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
 }
 
 const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7282';
+    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://quolike-server:8081';
+console.log('env.ASPNETCORE_URLS: ', env.ASPNETCORE_URLS);
+console.log('env.ASPNETCORE_HTTPS_PORT: ', env.ASPNETCORE_HTTPS_PORT);
+console.log('target: ', target);
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -43,9 +47,11 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/weatherforecast': {
+            '/api': {
                 target,
-                secure: false
+                changeOrigin: true,
+                secure: false,
+                logLevel: 'debug'
             }
         },
         port: 5173,
