@@ -73,8 +73,8 @@ export const RegisterPage = () => {
                                         className="form-control"
                                         id="confirmPassword"
                                         placeholder="Password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
                                         required
                                     />
                                     <label htmlFor="confirmPassword">Confirm Password</label>

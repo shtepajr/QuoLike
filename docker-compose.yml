@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  quolike-client:
+    build: 
+      context: ./QuoLike.Client
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - APPDATA=/app/appdata
+    volumes:
+      - ./appdata/ASP.NET/https:/app/appdata/ASP.NET/https:ro
+    depends_on:
+      - quolike-server
+    networks:
+      - quolike-network
+  quolike-server:
+    build:
+      context: .
+      dockerfile: QuoLike.Server/Dockerfile
+    ports:
+      - "8080:8080" # HTTP
+      - "8081:8081" # HTTPS
+    environment:
+      ASPNETCORE_URLS: https://+:8081;http://+:8080
+      ASPNETCORE_HTTPS_PORTS : 8081
+      ASPNETCORE_Kestrel__Certificates__Default__Password: 12345
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /app/appdata/ASP.NET/https/QuoLike.Server.pfx
+      SendGridKey: api-key
+      SendGridFromEmail: email
+    volumes:
+      - ./appdata/ASP.NET/https:/app/appdata/ASP.NET/https:ro
+    networks:
+      - quolike-network
+networks:
+  quolike-network:
+    driver: bridge

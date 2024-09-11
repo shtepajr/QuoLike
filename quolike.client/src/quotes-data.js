@@ -1,6 +1,6 @@
 // work with quotes data ('quotable' api and my quotes api)
 
-export const origin = 'https://localhost:7282';
+// export const origin = 'https://localhost:7282';
 
 export async function fetchQuotableMerged(page, limit) {
     const user = localStorage.getItem('user');
@@ -10,7 +10,7 @@ export async function fetchQuotableMerged(page, limit) {
     const { accessToken } = JSON.parse(user);
 
     try {
-        const response = await fetch(`${origin}/api/quotes/merged?page=${page}&limit=${limit}`, {
+        const response = await fetch(`/api/quotes/merged?page=${page}&limit=${limit}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ export async function fetchFavoritesMerged(page, limit) {
     const { accessToken } = JSON.parse(user);
 
     try {
-        const response = await fetch(`${origin}/api/quotes/all?page=${page}&limit=${limit}&isFavorite=true`, {
+        const response = await fetch(`/api/quotes/all?page=${page}&limit=${limit}&isFavorite=true`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export async function fetchArchivedMerged(page, limit) {
     const { accessToken } = JSON.parse(user);
 
     try {
-        const response = await fetch(`${origin}/api/quotes/all?page=${page}&limit=${limit}&isArchived=true`, {
+        const response = await fetch(`/api/quotes/all?page=${page}&limit=${limit}&isArchived=true`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ export async function toggleEntry(quote) {
     const { accessToken } = JSON.parse(user);
 
     try {
-        const response = await fetch(`${origin}/api/quotes/create`, {
+        const response = await fetch(`/api/quotes/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ export async function fetchQuotableRandom() {
     const { accessToken } = JSON.parse(user);
 
     try {
-        const response = await fetch(`${origin}/api/quotes/random`, {
+        const response = await fetch(`/api/quotes/random`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
