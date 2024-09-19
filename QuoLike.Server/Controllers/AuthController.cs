@@ -26,7 +26,6 @@ namespace QuoLike.Server.Controllers
             _signInManager = signInManager;
         }
 
-
         [HttpPost("forgotPasswordCustom")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest forgotPassword)
         {

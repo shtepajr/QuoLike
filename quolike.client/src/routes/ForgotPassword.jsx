@@ -43,6 +43,7 @@ export function ForgotPasswordPage() {
 
                                 <div className="form-floating">
                                     <input
+                                        name="email"
                                         type="email"
                                         className="form-control"
                                         id="floatingInput"

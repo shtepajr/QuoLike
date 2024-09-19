@@ -24,10 +24,10 @@ namespace QuoLike.Server
 
             builder.Services.AddHttpClient();
 
-            // Add Identity API endpoints and use EF Core stores
+            // Add Identity API endpoints and use EF Core stores 1/2
             builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-                .AddEntityFrameworkStores<QuoLikeDbContext>();
-
+               .AddEntityFrameworkStores<QuoLikeDbContext>();
+               
             // Email configuration
             builder.Services.Configure<IdentityOptions>(options =>
             {
@@ -68,9 +68,9 @@ namespace QuoLike.Server
 
             app.UseAuthorization();
 
-            // Map Identity API with a custom path
+            // Map Identity API with a custom path 2/2
             app.MapGroup("/api/auth")
-                .MapIdentityApi<IdentityUser>(); // Identity API 2/2
+                .MapIdentityApi<IdentityUser>();
 
             app.MapControllers();
 

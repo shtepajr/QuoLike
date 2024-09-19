@@ -15,12 +15,15 @@ namespace QuoLike.Server.Services
     public class EmailSender : IEmailSender
     {
         private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
 
         public EmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor,
-                           ILogger<EmailSender> logger)
+                           ILogger<EmailSender> logger,
+                           IConfiguration configuration)
         {
             Options = optionsAccessor.Value;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public AuthMessageSenderOptions Options { get; } //Set with Secret Manager.
@@ -31,7 +34,10 @@ namespace QuoLike.Server.Services
             {
                 throw new Exception("Null SendGridKey");
             }
-            await Execute(Options.SendGridKey, subject, message, toEmail);
+
+            var applicationUrl = _configuration["ApplicationUrl"]; // replace container service name
+            var formattedMessage = message.Replace("https://quolike-server:8081", applicationUrl);
+            await Execute(Options.SendGridKey, subject, formattedMessage, toEmail);
         }
         public async Task Execute(string apiKey, string subject, string message, string toEmail)
         {
