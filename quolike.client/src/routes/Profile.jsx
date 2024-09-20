@@ -38,10 +38,11 @@ export default function ProfilePage() {
         } else {
             try {
                 await manageInfo({ newEmail: user.email, oldPassword: passwordFormData.oldPassword, newPassword: passwordFormData.newPassword });
+                setMessage('Password changed successfully');
+                setIsEditingPassword(false);
 
             } catch (e) {
                 setIsEditingPassword(false);
-                setMessage('Password changed successfully');
             }
         }
     };
@@ -86,6 +87,7 @@ export default function ProfilePage() {
 
                                 <div className="form-floating">
                                     <input
+                                        name="oldPassword"
                                         type="password"
                                         className="form-control"
                                         id="floatingPassword"
@@ -97,6 +99,7 @@ export default function ProfilePage() {
                                 </div>
                                 <div className="form-floating">
                                     <input
+                                        name="newPassword"
                                         type="password"
                                         className="form-control"
                                         id="floatingNewPassword"
@@ -108,6 +111,7 @@ export default function ProfilePage() {
                                 </div>
                                 <div className="form-floating">
                                     <input
+                                        name="confirmPassword"
                                         type="password"
                                         className="form-control"
                                         id="floatingConfirmNewPassword"
